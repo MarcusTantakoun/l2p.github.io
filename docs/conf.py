@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, os.path.abspath(".."))
 
 project = "L2P"
-copyright = "2024, Marcus Tantakoun"
+copyright = "2025, Marcus Tantakoun"
 author = "Marcus Tantakoun"
 release = "0.1.0"
 
