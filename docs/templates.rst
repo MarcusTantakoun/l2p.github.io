@@ -4,6 +4,50 @@ It is **highly** recommended to use the base templates to properly extract LLM o
 
 Below are some examples of the base prompt structure that should be used in this library with your customized prompt using the `PromptBuilder` class. More details of each methods' prompt structure is found in **l2p/templates**.
 
+There are three main folders found in `/templates`:
+
+.. raw:: html
+
+   <details>
+   <summary><strong>templates/domain_templates</strong></summary>
+   <ul style="margin-left: 30px; margin-top: 2px;">
+    <li><i>/extract_nl_actions.txt</i>: for `DomainBuilder.extract_nl_actions()`</li>
+    <li><i>/formalize_domain_spec.txt</i>: for `DomainBuilder.formalize_domain_specs()`</li>
+    <li><i>/formalize_types.txt</i>: for `DomainBuilder.formalize_types()</li>
+    <li><i>/formalize_type_hierarchy.txt</i>: for `DomainBuilder.formalize_type_hierarchy()</li>
+    <li><i>/formalize_constants.txt</i>: for `DomainBuilder.formalize_constants()</li>
+    <li><i>/formalize_predicates.txt</i>: for `DomainBuilder.formalize_predicates()</li>
+    <li><i>/formalize_functions.txt</i>: for `DomainBuilder.formalize_functions()</li>
+    <li><i>/formalize_pddl_action.txt</i>: for `DomainBuilder.formalize_pddl_action()</li>
+    <li><i>/formalize_pddl_actions.txt</i>: for `DomainBuilder.formalize_pddl_actions()</li>
+    <li><i>/formalize_parameters.txt</i>: for `DomainBuilder.formalize_parameters()</li>
+    <li><i>/formalize_preconditions.txt</i>: for `DomainBuilder.formalize_preconditions()</li>
+    <li><i>/formalize_effects.txt</i>: for `DomainBuilder.formalize_effects()</li>
+   </ul>
+   </details>
+
+.. raw:: html
+
+   <details>
+   <summary><strong>templates/task_templates</strong></summary>
+   <ul style="margin-left: 30px; margin-top: 2px;">
+     <li><i>/formalize_task.txt</i>: for `TaskBuilder.formalize_task()</li>
+     <li><i>/formalize_objects.txt</i>: for `TaskBuilder.formalize_objects()</li>
+     <li><i>/formalize_initial.txt</i>: for `TaskBuilder.formalize_initial_state()</li>
+     <li><i>/formalize_goal.txt</i>: for `TaskBuilder.formalize_goal_state()</li>
+   </ul>
+   </details>
+
+.. raw:: html
+
+   <details>
+   <summary><strong>templates/feedback_templates</strong></summary>
+   <ul style="margin-left: 30px; margin-top: 2px;">
+     <li><i>/feedback.txt</i>: base template needed for LLM to provide feedback in any functions in `FeedbackBuilder`</li>
+   </ul>
+   </details>
+
+
 Domain Extraction Prompts Example
 -------------------------------------------------------
 This is an example using `l2p/templates/domain_templates/extract_pddl_action.txt`
@@ -15,24 +59,13 @@ This is an example using `l2p/templates/domain_templates/extract_pddl_action.txt
     from l2p.utils import load_file
 
     # LOAD BASE FORMAT TEMPLATE
-    template_path = "templates/domain_templates/extract_pddl_action.txt"
-    base_template = load_file(template_path)
+    template_path = "templates/domain_templates/formalize_pddl_action.txt"
+    format_template = load_file(template_path)
 
-    role_desc = (
-        "You are a PDDL action constructor. Your job is to take the task given in natural language and convert it into the following format:\n\n"
-        f"{base_template}" # INSERT BASE TEMPLATE
-    )
+    role_desc = "You are a PDDL action constructor. Your job is to take " \
+        "the task given in natural language and convert it into PDDL."
                 
-    tech_desc = """
-    You should follow a Chain of Thought (CoT) process for constructing a PDDL action before outputting the final answer:
-
-    1. Construct action parameters and create necessary predicates to produce action preconditions in PDDL
-    2. Construct necessary predicates to produce action effects in PDDL
-    3. Check for inconsistencies and/or requirements and state the errors if there are any. If there are errors, generate a suggestion response (i.e. deleting, modifying, adding types)
-    4. Re-iterate parameters, preconditions, effects, and predicates
-    """
-                
-    task_desc = f"""
+    task_desc = """
     ## Domain
     {domain_desc}
 
@@ -51,17 +84,23 @@ This is an example using `l2p/templates/domain_templates/extract_pddl_action.txt
     ## Available predicates
     {predicates}
     """
-                
-    action_construction_prompt = PromptBuilder(role=role_desc, technique=tech_desc, task=task_desc)
+            
+    # assemble prompt
+    action_construction_prompt = PromptBuilder(
+        role=role_desc, 
+        format=format_template, 
+        task=task_desc
+        )
 
     print(action_construction_prompt.generate_prompt())
 
 
 The following is the output: ::
     
-    [ROLE]: You are a PDDL action constructor. Your job is to take the task given in natural language and convert it into the following format:
+    [ROLE]: You are a PDDL action constructor. Your job is to take the task given in natural language and convert it into PDDL.
 
-    End your final answers underneath the headers: '### Action Parameters,' '### Action Preconditions,' '### Action Effects,' and '### New Predicates' with ''' ''' comment blocks in PDDL as so:
+    ------------------------------------------------
+    [FORMAT]: End your final answers underneath the headers: '### Action Parameters,' '### Action Preconditions,' '### Action Effects,' and '### New Predicates' with ``` ``` comment blocks in PDDL as so:
 
     ### Action Parameters
     ```
@@ -88,15 +127,6 @@ The following is the output: ::
     ``` 
 
     If there are no new predicates created, keep an empty space enclosed ```  ``` with the '### New Predicates' header.
-
-    ------------------------------------------------
-    [TECHNIQUE]: 
-    You should follow a Chain of Thought (CoT) process for constructing a PDDL action before outputting the final answer:
-
-    1. Construct action parameters and create necessary predicates to produce action preconditions in PDDL
-    2. Construct necessary predicates to produce action effects in PDDL
-    3. Check for inconsistencies and/or requirements and state the errors if there are any. If there are errors, generate a suggestion response (i.e. deleting, modifying, adding types)
-    4. Re-iterate parameters, preconditions, effects, and predicates
 
     ------------------------------------------------
     [TASK]:

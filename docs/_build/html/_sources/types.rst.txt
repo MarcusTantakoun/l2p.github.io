@@ -31,8 +31,8 @@ Converts to this string using `format_types_to_string(types)` ::
                 {
                     "child_type_1": "description for child type 1",
                     "children": [
-                        {"child_child_type_1": "description for child type 1", "children": []},
-                        {"child_child_type_2": "description for child type 1", "children": []}
+                        {"child_child_type_1": "description for child child type 1", "children": []},
+                        {"child_child_type_2": "description for child child type 1", "children": []}
                     ]
                 }
             ]
@@ -43,7 +43,7 @@ Converts to this string using `format_types_to_string(types)` ::
                 {
                     "child_type_2": "description for child type 2",
                     "children": [
-                        {"child_child_type_3": "description for child type 2", "children": []}
+                        {"child_child_type_3": "description for child child type 3", "children": []}
                     ]
                 }
             ]
@@ -54,11 +54,11 @@ Converts to this string using `format_types_to_string(types)` ::
 
     parent_type_1 ; description for parent type 1
     child_type_1 - parent_type_1 ; description for child type 1
-    child_child_type_1 - child_type_1 ; description for child type 1
-    child_child_type_2 - child_type_1 ; description for child type 1
+    child_child_type_1 - child_type_1 ; description for child child type 1
+    child_child_type_2 - child_type_1 ; description for child child type 1
     parent_type_2 ; description for parent type 2
     child_type_2 - parent_type_2 ; description for child type 2
-    child_child_type_3 - child_type_2 ; description for child type 2
+    child_child_type_3 - child_type_2 ; description for child child type 3
 
 
 Predicates
@@ -110,6 +110,8 @@ And converts it into this: ::
         }
     ]
 
+**NOTE:** `:functions` type class follows the same format as `:predicates` in L2P.
+
 Action
 -------------------------------------------------------
 An **Action** is a class defined as a `TypeDict` in Python. Each key specifies a property of the action schema:
@@ -144,13 +146,6 @@ For example, **formalize_pddl_action()** takes the LLM output: ::
         (on ?b1 ?b2) ; The top block is now on the bottom block
         (not (clear ?b2)) ; The bottom block is no longer clear
     )
-    ```
-
-    ### New Predicates
-    ```
-    - (holding ?a - arm ?b - block): true if the arm ?a is holding the block ?b
-    - (clear ?b - block): true if the block ?b is clear and can be stacked upon
-    - (on ?b1 - block ?b2 - block): true if the block ?b1 is on top of the block ?b2
     ```
 
 And converts it into this: ::
@@ -194,6 +189,8 @@ For example, **formalize_preconditions()** takes the LLM output: ::
 And converts it into this: ::
 
     preconditions: str = '(and\n    (holding ?arm ?top) ; The arm is holding the top block\n    (clear ?bottom) ; The bottom block is clear\n)'
+
+**format_preconditions**
 
 Action Effects
 -------------------------------------------------------

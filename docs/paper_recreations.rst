@@ -1,8 +1,8 @@
 Paper Recreations
 =================
-This library is a collection of tools for PDDL model generation extracted from natural language driven by large language models. This library is an expansion from the survey paper **Leveraging Large Language Models for Automated Planning and Model Construction: A Survey**. Papers that have been reconstructed so far and can be found in the GitHub repo. 
+This library is a collection of tools for PDDL model generation extracted from natural language driven by large language models. This library is an expansion from the survey paper `"LLMs as Planning Formalizers: A Survey for Leveraging Large Language Models to Construct Automated Planning Models" <https://arxiv.org/abs/2503.18971v1>`_. Papers that have been reconstructed so far and can be found in the `Github <https://github.com/AI-Planning/l2p>`_ repo. 
 
-To see full list of current up-to-date papers, please visit our GitHub page `here <https://github.com/AI-Planning/l2p>`_. This list will be continuously updated.
+To see full list of current up-to-date papers in literature, please visit (see :doc:`paper_feed`). This list will be continuously updated.
 
 Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveraging Pre-trained Large Language Models to Construct and Utilize World Models for Model-based Task Planning" <https://arxiv.org/abs/2305.14909>`_:
 
@@ -15,15 +15,8 @@ Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveragi
     "tyreworld",
     ]
 
-    UNSUPPORTED_KEYWORDS = [
-        "forall", 
-        "when", 
-        "exists", 
-        "implies"
-    ]
-
     def construct_action(
-        model: LLM,
+        model: BaseLLM,
         act_pred_prompt: str,
         action_name: str,
         predicates: list[Predicate],
@@ -37,7 +30,7 @@ Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveragi
         Process looping until it abides the custom syntax validation check.
         
         Args:
-            - model (LLM): the large language model to be inferenced
+            - model (BaseLLM): the large language model to be inferenced
             - act_pred_prompt (str): contains information of action and format creation passed to LLM
             - action_name (str): current action to be generated
             - predicates (list[Predicate]): current list of predicates generated
@@ -55,7 +48,16 @@ Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveragi
         predicate_str = "\n".join([f"- {pred['clean']}" for pred in predicates])
         
         # syntax validator check
-        if syntax_validator: validator = SyntaxValidator()
+        if syntax_validator: 
+            validator = SyntaxValidator()
+            validator.unsupported_keywords = []
+
+            validator.error_types = [
+                'validate_header', 'validate_duplicate_headers', 'validate_unsupported_keywords',
+                'validate_params', 'validate_duplicate_predicates', 'validate_types_predicates',
+                'validate_format_predicates', 'validate_usage_action'
+                ]
+            
         else: validator = None
 
         no_syntax_error = False
@@ -75,6 +77,7 @@ Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveragi
                             action_name=action_name,
                             predicates=predicates,
                             types=types,
+                            extract_new_preds=True,
                             syntax_validator=validator,
                         )
                     )
@@ -112,7 +115,7 @@ Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveragi
 
 
     def run_llm_dm(
-        model: LLM,
+        model: BaseLLM,
         domain: str = "household",
         max_iter: int = 2,
         max_attempts: int = 8
@@ -122,7 +125,7 @@ Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveragi
         actions (params, preconditions, effects) and predicates to create an overall PDDL domain file.
         
         Args:
-            - model (LLM): the large language model to be inferenced
+            - model (BaseLLM): the large language model to be inferenced
             - domain (str): choice of domain to task (defaults to `household`)
             - max_iter: outer loop iteration; # of overall action list resets (defaults to 2)
             - max_attempts: # of attempts to generate a single actions properly (defaults to 8)
@@ -144,10 +147,6 @@ Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveragi
         actions = list(action_model.keys())
         action_list = list()
         predicates = list()
-
-        # initialize result folder
-        result_log_dir = f"paper_reconstructions/llm+dm/results/{domain}"
-        os.makedirs(result_log_dir, exist_ok=True)
         
         """
         Action-by-action algorithm: iteratively generates an action model (parameters, precondition, effects) one at a time. At the same time,
@@ -158,7 +157,6 @@ Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveragi
         
         # outer loop that resets all action creation to be conditioned on updated predicate list
         for i_iter in range(max_iter):
-            readable_results = '' # for logging purposes
             prev_predicate_list = deepcopy(predicates) # copy previous predicate list
             action_list = []
             
@@ -167,12 +165,9 @@ Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveragi
                 
                 # retrieve prompt for specific action
                 action_prompt, _ = get_action_prompt(prompt_template, action_model[action])
-                readable_results += '\n' * 2 + '#' * 20 + '\n' + f'Action: {action}\n' + '#' * 20 + '\n'
                 
                 # retrieve prompt for current predicate list
                 predicate_prompt = get_predicate_prompt(predicates)
-                readable_results += '-' * 20
-                readable_results += f'\n{predicate_prompt}\n' + '-' * 20
 
                 # assemble template
                 action_predicate_prompt = f'{action_prompt}\n\n{predicate_prompt}'
@@ -186,18 +181,6 @@ Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveragi
                 action_list.append(action)
                 predicates = prune_predicates(predicates, action_list)
                 
-                readable_results += '\n' + '-' * 10 + '-' * 10 + '\n'
-                readable_results += llm_response + '\n'
-
-            # record log results into separate file of current iteration
-            readable_results += '\n' + '-' * 10 + '-' * 10 + '\n'
-            readable_results += 'Extracted predicates:\n'
-            for i, p in enumerate(predicates):
-                readable_results += f'\n{i + 1}. {p["raw"]}'
-                
-            with open(os.path.join(result_log_dir, f'{engine}_0_{i_iter}.txt'), 'w') as f:
-                f.write(readable_results)
-                
             gen_done = False
             if len(prev_predicate_list) == len(predicates):
                 print(f'[INFO] iter {i_iter} | no new predicate has been defined, will terminate the process')
@@ -206,48 +189,35 @@ Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveragi
             if gen_done:
                 break
             
-            
-        # format components for PDDL generation
-        predicate_str = "\n".join(
-                [pred["clean"].replace(":", " ; ") for pred in predicates]
-            )
-            
-        pruned_types = {
-            name: description
-            for name, description in types.items()
-            if name not in UNSUPPORTED_KEYWORDS
-        }  # remove unsupported words
-        types_str = "\n".join(pruned_types)
-            
         # generate PDDL format
         pddl_domain = domain_builder.generate_domain(
-                domain=domain,
+                domain_name=domain,
                 requirements=reqs,
-                types=types_str,
-                predicates=predicate_str,
+                types=types,
+                predicates=predicates,
                 actions=action_list,
             )
 
 
     # helper functions
     def get_action_prompt(prompt_template: str, action_desc: str):
-    """Creates prompt for specific action."""
-    
-    action_desc_prompt = action_desc['desc']
-    for i in action_desc['extra_info']:
-        action_desc_prompt += ' ' + i
-    
-    full_prompt = str(prompt_template) + ' ' + action_desc_prompt
-    
-    return full_prompt, action_desc_prompt
+        """Creates prompt for specific action."""
+        
+        action_desc_prompt = action_desc['desc']
+        for i in action_desc['extra_info']:
+            action_desc_prompt += ' ' + i
+        
+        full_prompt = str(prompt_template) + ' ' + action_desc_prompt
+        
+        return full_prompt, action_desc_prompt
 
 
     def get_predicate_prompt(predicates):
         """Creates prompt for list of available predicates generated so far."""
         
-        predicate_prompt = 'You can create and define new predicates, but you may also reuse the following predicates:'
+        predicate_prompt = 'You can create and define new predicates, but you may also reuse the following predicates:\n'
         if len(predicates) == 0:
-            predicate_prompt += '\nNo predicate has been defined yet'
+            predicate_prompt += 'No predicate has been defined yet'
         else:
             predicate_prompt += "\n".join([f"- {pred['clean']}" for pred in predicates])
         return predicate_prompt

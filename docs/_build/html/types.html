@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Templates" href="templates.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Paper Feed" href="paper_feed.html" /><link rel="prev" title="Templates" href="templates.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>Data Types - l2p</title>
@@ -206,6 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="paper_recreations.html">Paper Recreations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="templates.html">Templates</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paper_feed.html">Paper Feed</a></li>
 </ul>
 
 </div>
@@ -275,8 +276,8 @@
             <span class="p">{</span>
                 <span class="s2">&quot;child_type_1&quot;</span><span class="p">:</span> <span class="s2">&quot;description for child type 1&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="p">{</span><span class="s2">&quot;child_child_type_1&quot;</span><span class="p">:</span> <span class="s2">&quot;description for child type 1&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[]},</span>
-                    <span class="p">{</span><span class="s2">&quot;child_child_type_2&quot;</span><span class="p">:</span> <span class="s2">&quot;description for child type 1&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+                    <span class="p">{</span><span class="s2">&quot;child_child_type_1&quot;</span><span class="p">:</span> <span class="s2">&quot;description for child child type 1&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[]},</span>
+                    <span class="p">{</span><span class="s2">&quot;child_child_type_2&quot;</span><span class="p">:</span> <span class="s2">&quot;description for child child type 1&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[]}</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">]</span>
@@ -287,7 +288,7 @@
             <span class="p">{</span>
                 <span class="s2">&quot;child_type_2&quot;</span><span class="p">:</span> <span class="s2">&quot;description for child type 2&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="p">{</span><span class="s2">&quot;child_child_type_3&quot;</span><span class="p">:</span> <span class="s2">&quot;description for child type 2&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+                    <span class="p">{</span><span class="s2">&quot;child_child_type_3&quot;</span><span class="p">:</span> <span class="s2">&quot;description for child child type 3&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[]}</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">]</span>
@@ -298,11 +299,11 @@
 <p>Converts to this string using <cite>format_types_to_string(types)</cite></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parent_type_1</span> <span class="p">;</span> <span class="n">description</span> <span class="k">for</span> <span class="n">parent</span> <span class="nb">type</span> <span class="mi">1</span>
 <span class="n">child_type_1</span> <span class="o">-</span> <span class="n">parent_type_1</span> <span class="p">;</span> <span class="n">description</span> <span class="k">for</span> <span class="n">child</span> <span class="nb">type</span> <span class="mi">1</span>
-<span class="n">child_child_type_1</span> <span class="o">-</span> <span class="n">child_type_1</span> <span class="p">;</span> <span class="n">description</span> <span class="k">for</span> <span class="n">child</span> <span class="nb">type</span> <span class="mi">1</span>
-<span class="n">child_child_type_2</span> <span class="o">-</span> <span class="n">child_type_1</span> <span class="p">;</span> <span class="n">description</span> <span class="k">for</span> <span class="n">child</span> <span class="nb">type</span> <span class="mi">1</span>
+<span class="n">child_child_type_1</span> <span class="o">-</span> <span class="n">child_type_1</span> <span class="p">;</span> <span class="n">description</span> <span class="k">for</span> <span class="n">child</span> <span class="n">child</span> <span class="nb">type</span> <span class="mi">1</span>
+<span class="n">child_child_type_2</span> <span class="o">-</span> <span class="n">child_type_1</span> <span class="p">;</span> <span class="n">description</span> <span class="k">for</span> <span class="n">child</span> <span class="n">child</span> <span class="nb">type</span> <span class="mi">1</span>
 <span class="n">parent_type_2</span> <span class="p">;</span> <span class="n">description</span> <span class="k">for</span> <span class="n">parent</span> <span class="nb">type</span> <span class="mi">2</span>
 <span class="n">child_type_2</span> <span class="o">-</span> <span class="n">parent_type_2</span> <span class="p">;</span> <span class="n">description</span> <span class="k">for</span> <span class="n">child</span> <span class="nb">type</span> <span class="mi">2</span>
-<span class="n">child_child_type_3</span> <span class="o">-</span> <span class="n">child_type_2</span> <span class="p">;</span> <span class="n">description</span> <span class="k">for</span> <span class="n">child</span> <span class="nb">type</span> <span class="mi">2</span>
+<span class="n">child_child_type_3</span> <span class="o">-</span> <span class="n">child_type_2</span> <span class="p">;</span> <span class="n">description</span> <span class="k">for</span> <span class="n">child</span> <span class="n">child</span> <span class="nb">type</span> <span class="mi">3</span>
 </pre></div>
 </div>
 </section>
@@ -355,6 +356,7 @@
 <span class="p">]</span>
 </pre></div>
 </div>
+<p><strong>NOTE:</strong> <cite>:functions</cite> type class follows the same format as <cite>:predicates</cite> in L2P.</p>
 </section>
 <section id="action">
 <h2>Action<a class="headerlink" href="#action" title="Link to this heading">¶</a></h2>
@@ -389,13 +391,6 @@
     (on ?b1 ?b2) ; The top block is now on the bottom block
     (not (clear ?b2)) ; The bottom block is no longer clear
 )
-```
-
-### New Predicates
-```
-- (holding ?a - arm ?b - block): true if the arm ?a is holding the block ?b
-- (clear ?b - block): true if the block ?b is clear and can be stacked upon
-- (on ?b1 - block ?b2 - block): true if the block ?b1 is on top of the block ?b2
 ```
 </pre></div>
 </div>
@@ -441,6 +436,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">preconditions</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;(and</span><span class="se">\n</span><span class="s1">    (holding ?arm ?top) ; The arm is holding the top block</span><span class="se">\n</span><span class="s1">    (clear ?bottom) ; The bottom block is clear</span><span class="se">\n</span><span class="s1">)&#39;</span>
 </pre></div>
 </div>
+<p><strong>format_preconditions</strong></p>
 </section>
 <section id="action-effects">
 <h2>Action Effects<a class="headerlink" href="#action-effects" title="Link to this heading">¶</a></h2>
@@ -532,7 +528,15 @@ green_block - object
       <footer>
         
         <div class="related-pages">
-          
+          <a class="next-page" href="paper_feed.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Paper Feed</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
           <a class="prev-page" href="templates.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
@@ -548,7 +552,7 @@ green_block - object
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2024, Marcus Tantakoun
+                Copyright &#169; 2025, Marcus Tantakoun
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -595,7 +599,7 @@ green_block - object
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=01f34227"></script>
+</div><script src="_static/documentation_options.js?v=000c92bf"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

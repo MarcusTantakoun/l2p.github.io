@@ -2,12 +2,28 @@ L2P
 ================
 Below are the in-depth usage of L2P. It is **highly** recommended to use the base template found in :doc:`templates` to properly extract LLM output into the designated Python formats from these methods.
 
+**Jump to:**  
+
+→ :ref:`promptbuilder`  
+
+→ :ref:`domainbuilder`  
+
+→ :ref:`taskbuilder`  
+
+→ :ref:`feedbackbuilder`  
+
+→ :ref:`utils`
+
+.. _promptbuilder:
+
 PromptBuilder
 -------------
 .. autoclass:: l2p.PromptBuilder
    :members:
    :undoc-members:
    :inherited-members:
+
+.. _domainbuilder:
 
 DomainBuilder
 -------------
@@ -16,6 +32,8 @@ DomainBuilder
    :undoc-members:
    :inherited-members:
 
+.. _taskbuilder:
+
 TaskBuilder
 -----------
 .. autoclass:: l2p.TaskBuilder
@@ -23,12 +41,16 @@ TaskBuilder
    :undoc-members:
    :inherited-members:
 
+.. _feedbackbuilder:
+
 FeedbackBuilder
 ---------------
 .. autoclass:: l2p.FeedbackBuilder
    :members:
    :undoc-members:
    :inherited-members:
+
+.. _utils:
 
 Utils
 -----

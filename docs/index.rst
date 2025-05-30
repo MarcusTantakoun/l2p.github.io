@@ -11,10 +11,11 @@ Welcome to Language-to-Plan (L2P)!
    paper_recreations
    templates
    types
+   paper_feed
 
 What is L2P?
 ------------
-This library is a collection of tools for PDDL model generation extracted from natural language driven by large language models. This library is an expansion from the survey paper **Leveraging Large Language Models for Automated Planning and Model Construction: A Survey** (currently under review process).
+This library is a collection of tools for PDDL model generation extracted from natural language driven by large language models. This library is an expansion from the survey paper `"LLMs as Planning Formalizers: A Survey for Leveraging Large Language Models to Construct Automated Planning Models" <https://arxiv.org/abs/2503.18971v1>`_.
 L2P is an offline, NL to PDDL system that supports domain-agnostic planning. It does this via creating an intermediate PDDL representation of the domain and task, which can then be solved by a classical planner.
 
 Our GitHub can be found `here <https://github.com/AI-Planning/l2p>`_. L2P PyPI can be found `here <https://pypi.org/project/l2p/>`_.

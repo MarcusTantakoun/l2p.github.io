@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Getting Started" href="getting_started.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Data Types" href="types.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>l2p</title>
+        <title>Paper Feed - l2p</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">l2p</div></a>
+      <a href="index.html"><div class="brand">l2p</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,7 +188,7 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
   <span class="sidebar-brand-text">l2p</span>
@@ -200,13 +200,13 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="l2p.html">L2P</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paper_recreations.html">Paper Recreations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="types.html">Data Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="paper_feed.html">Paper Feed</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Paper Feed</a></li>
 </ul>
 
 </div>
@@ -227,7 +227,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/index.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/paper_feed.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -247,62 +247,58 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="welcome-to-language-to-plan-l2p">
-<h1>Welcome to Language-to-Plan (L2P)!<a class="headerlink" href="#welcome-to-language-to-plan-l2p" title="Link to this heading">¶</a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="l2p.html">L2P</a></li>
-<li class="toctree-l1"><a class="reference internal" href="paper_recreations.html">Paper Recreations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="templates.html">Templates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="types.html">Data Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="paper_feed.html">Paper Feed</a></li>
+          <section id="paper-feed">
+<h1>Paper Feed<a class="headerlink" href="#paper-feed" title="Link to this heading">¶</a></h1>
+<p>Must-read papers on LLM-driven planning specification.</p>
+<section id="new-papers">
+<h2>New Papers!<a class="headerlink" href="#new-papers" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>“Text2World: Benchmarking Large Language Models for Symbolic World Model Generation”</strong> Hu et al. (2025) <a class="reference external" href="https://arxiv.org/abs/2502.13092">[paper]</a> <a class="reference external" href="https://github.com/Aaron617/text2world">[code]</a></p></li>
 </ul>
-</div>
-<section id="what-is-l2p">
-<h2>What is L2P?<a class="headerlink" href="#what-is-l2p" title="Link to this heading">¶</a></h2>
-<p>This library is a collection of tools for PDDL model generation extracted from natural language driven by large language models. This library is an expansion from the survey paper <a class="reference external" href="https://arxiv.org/abs/2503.18971v1">“LLMs as Planning Formalizers: A Survey for Leveraging Large Language Models to Construct Automated Planning Models”</a>.
-L2P is an offline, NL to PDDL system that supports domain-agnostic planning. It does this via creating an intermediate PDDL representation of the domain and task, which can then be solved by a classical planner.</p>
-<p>Our GitHub can be found <a class="reference external" href="https://github.com/AI-Planning/l2p">here</a>. L2P PyPI can be found <a class="reference external" href="https://pypi.org/project/l2p/">here</a>.</p>
+</div></blockquote>
 </section>
-<section id="features">
-<h2>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><dl class="simple">
-<dt>Build PDDL components from natural language in Python via Large Language Models</dt><dd><ul>
-<li><p>DOMAIN: types, predicates, action schemas (parameters, preconditions, effects)</p></li>
-<li><p>PROBLEM: objects, initial, and goal states</p></li>
+<section id="paper-list">
+<h2>Paper List<a class="headerlink" href="#paper-list" title="Link to this heading">¶</a></h2>
+<p>This section presents a taxonomy of research within Model Construction, organized into three broad categories: Model Generation, Model Editing, and Model Benchmarks. Within each category, the most recent contributions are listed last.</p>
+<section id="model-generation">
+<h3><strong>Model Generation</strong><a class="headerlink" href="#model-generation" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt><strong>Task Modeling</strong></dt><dd><ul class="simple">
+<li><p><strong>“Structured, flexible, and robust: benchmarking and improving large language models towards more human-like behaviour in out-of-distribution reasoning tasks”</strong> Collins et al. (2022) <a class="reference external" href="https://arxiv.org/abs/2205.05718">[paper]</a> <a class="reference external" href="https://github.com/collinskatie/structured_flexible_and_robust">[code]</a></p></li>
+<li><p><strong>“Translating natural language to planning goals with large-language models”</strong>  Xie et al. (2023) <a class="reference external" href="https://arxiv.org/abs/2302.05128">[paper]</a> <a class="reference external" href="https://github.com/clear-nus/gpt-pddl">[code]</a></p></li>
+<li><p><strong>“Faithful Chain-of-Thought Reasoning”</strong> Lyu et al. (2023) <a class="reference external" href="https://arxiv.org/abs/2301.13379">[paper]</a> <a class="reference external" href="https://github.com/veronica320/faithful-cot">[code]</a></p></li>
+<li><p><strong>“LLM+P: Empowering Large Language Models with Optimal Planning Proficiency”</strong> Liu et al. (2023) <a class="reference external" href="https://arxiv.org/abs/2304.11477">[paper]</a> <a class="reference external" href="https://github.com/Cranial-XIX/llm-pddl">[code]</a></p></li>
+<li><p><strong>“Dynamic Planning with a LLM”</strong> Dagan et al. (2023) <a class="reference external" href="https://arxiv.org/abs/2308.06391">[paper]</a> <a class="reference external" href="https://github.com/itl-ed/llm-dp">[code]</a></p></li>
+<li><p><strong>“AutoGPT+P: Affordance-based Task Planning with Large Language Models”</strong> Birr et al. (2024) <a class="reference external" href="https://arxiv.org/abs/2402.10778">[paper]</a> <a class="reference external" href="https://git.h2t.iar.kit.edu/sw/autogpt-p">[code]</a></p></li>
+<li><p><strong>“”</strong>  et al. (202) <a href="#id1"><span class="problematic" id="id2">`[paper] &lt;&gt;`__</span></a> <a href="#id1"><span class="problematic" id="id3">`[code] &lt;&gt;`__</span></a></p></li>
+<li><p><strong>“”</strong>  et al. (202) <a href="#id1"><span class="problematic" id="id4">`[paper] &lt;&gt;`__</span></a> <a href="#id1"><span class="problematic" id="id5">`[code] &lt;&gt;`__</span></a></p></li>
+<li><p><strong>“”</strong>  et al. (202) <a href="#id1"><span class="problematic" id="id6">`[paper] &lt;&gt;`__</span></a> <a href="#id1"><span class="problematic" id="id7">`[code] &lt;&gt;`__</span></a></p></li>
+<li><p><strong>“”</strong>  et al. (202) <a href="#id1"><span class="problematic" id="id8">`[paper] &lt;&gt;`__</span></a> <a href="#id1"><span class="problematic" id="id9">`[code] &lt;&gt;`__</span></a></p></li>
+<li><p><strong>“”</strong>  et al. (202) <a href="#id1"><span class="problematic" id="id10">`[paper] &lt;&gt;`__</span></a> <a href="#id1"><span class="problematic" id="id11">`[code] &lt;&gt;`__</span></a></p></li>
+<li><p><strong>“”</strong>  et al. (202) <a href="#id1"><span class="problematic" id="id12">`[paper] &lt;&gt;`__</span></a> <a href="#id1"><span class="problematic" id="id13">`[code] &lt;&gt;`__</span></a></p></li>
 </ul>
 </dd>
 </dl>
-</li>
-</ul>
+<hr class="docutils" />
+<p><strong>Domain Modeling</strong></p>
+<hr class="docutils" />
+<p><strong>Hybrid Modeling</strong></p>
 </section>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
-<p>Install <code class="docutils literal notranslate"><span class="pre">l2p</span></code> by running:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">l2p</span>
-</pre></div>
-</div>
+<hr class="docutils" />
+<section id="model-editing">
+<h3><strong>Model Editing</strong><a class="headerlink" href="#model-editing" title="Link to this heading">¶</a></h3>
 </section>
-<section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
-<p><a class="reference internal" href="getting_started.html"><span class="doc">Getting Started</span></a> is the place to go to hit the ground running on using l2p.</p>
-<p>The <a class="reference internal" href="l2p.html"><span class="doc">L2P</span></a> documentation provides documentation for the library.</p>
+<hr class="docutils" />
+<section id="model-benchmarks">
+<h3><strong>Model Benchmarks</strong><a class="headerlink" href="#model-benchmarks" title="Link to this heading">¶</a></h3>
+<p><strong>LLMs-as-Planners</strong></p>
+<hr class="docutils" />
+<p><strong>LLMs-as-Formalizers PDDL Benchmarks</strong></p>
+<hr class="docutils" />
+<p>The following is the core summary of model generation frameworks in <a class="reference external" href="https://arxiv.org/abs/2503.18971v1">“LLMs as Planning Formalizers: A Survey for Leveraging Large Language Models to Construct Automated Planning Models”</a>:</p>
+<img alt="_static/file.png" src="_static/survey_table.png" />
 </section>
-<section id="support">
-<h2>Support<a class="headerlink" href="#support" title="Link to this heading">¶</a></h2>
-<p>If you are having issues, please let us know.
-Reach out to us at <a class="reference external" href="mailto:20mt1&#37;&#52;&#48;queensu&#46;ca">20mt1<span>&#64;</span>queensu<span>&#46;</span>ca</a> or by creating a GitHub issue.</p>
-</section>
-<section id="license">
-<h2>License<a class="headerlink" href="#license" title="Link to this heading">¶</a></h2>
-<p>The project is licensed under the MIT license for the Queen’s Mu Lab.</p>
-</section>
-<section id="about-l2p">
-<h2>About L2P<a class="headerlink" href="#about-l2p" title="Link to this heading">¶</a></h2>
-<p>With the proliferation of related techniques to convert NL to PDDL, we are seeing an ever-increasing set of related methods. To bring them together under a single computational umbrella, and beyond just relating the work together conceptually as we have done thus far in this survey, we created a unified framework that encompasses the vast majority of existing methods: Language-to-Plan (L2P). This Python library is open source and captures a generalised version of the proposed <a class="reference external" href="https://arxiv.org/abs/2402.01817">“LLM-Modulo” framework</a> , which emphasizes soundness guarantees through iterative plan refining via external verifiers. While L2P embodies the core principles of the LLM-Modulo framework, which advocates for LLMs autonomously generating plan candidates themselves, it shifts the focus by facilitating the creation of PDDL files using LLMs – aligning with this paper’s paradigm. This approach allows for the integration of external verifiers and feedback critics, enabling users to modify and refine the extracted models.</p>
 </section>
 </section>
 
@@ -311,16 +307,18 @@ Reach out to us at <a class="reference external" href="mailto:20mt1&#37;&#52;&#4
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="getting_started.html">
+          
+          <a class="prev-page" href="types.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
-                  <span>Next</span>
+                  <span>Previous</span>
                 </div>
-                <div class="title">Getting Started</div>
+                
+                <div class="title">Data Types</div>
+                
               </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -351,14 +349,14 @@ Reach out to us at <a class="reference external" href="mailto:20mt1&#37;&#52;&#4
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Welcome to Language-to-Plan (L2P)!</a><ul>
-<li><a class="reference internal" href="#what-is-l2p">What is L2P?</a></li>
-<li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#usage">Usage</a></li>
-<li><a class="reference internal" href="#support">Support</a></li>
-<li><a class="reference internal" href="#license">License</a></li>
-<li><a class="reference internal" href="#about-l2p">About L2P</a></li>
+<li><a class="reference internal" href="#">Paper Feed</a><ul>
+<li><a class="reference internal" href="#new-papers">New Papers!</a></li>
+<li><a class="reference internal" href="#paper-list">Paper List</a><ul>
+<li><a class="reference internal" href="#model-generation"><strong>Model Generation</strong></a></li>
+<li><a class="reference internal" href="#model-editing"><strong>Model Editing</strong></a></li>
+<li><a class="reference internal" href="#model-benchmarks"><strong>Model Benchmarks</strong></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
