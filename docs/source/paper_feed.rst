@@ -129,6 +129,8 @@ This section presents a taxonomy of research within Model Construction, organize
       - `[paper] <https://arxiv.org/abs/2404.07751>`__
     * - **"Large Language Models as Planning Domain Generators"** Oswald et al. (2024)
       - `[paper] <https://arxiv.org/abs/2405.06650>`__ `[code] <https://github.com/IBM/NL2PDDL>`__
+    * - 
+      - `[paper] <>`__ `[code] <>`__
 
 .. raw:: html
 
@@ -153,6 +155,8 @@ This section presents a taxonomy of research within Model Construction, organize
       - `[paper] <https://drive.google.com/file/d/1gd7DOHY6ztiTO1jllDOmP-V8V-q1N0uG/view>`__
     * - **https://elib.uni-stuttgart.de/server/api/core/bitstreams/efc35e23-7aec-4056-8de6-a56ba5b53249/content** Patil (2024)
       - `[paper] <https://elib.uni-stuttgart.de/server/api/core/bitstreams/efc35e23-7aec-4056-8de6-a56ba5b53249/content>`__
+    * - 
+      - `[paper] <>`__ `[code] <>`__
 
 .. raw:: html
 
@@ -171,12 +175,26 @@ This section presents a taxonomy of research within Model Construction, organize
 
 .. list-table::
 
-    * - 
-      - `[paper] <>`__ `[code] <>`__
-    * - 
-      - `[paper] <>`__ `[code] <>`__
-    * - 
-      - `[paper] <>`__ `[code] <>`__
+    * - **ON THE PLANNING ABILITIES OF LARGE LANGUAGE MODELS (A CRITICAL INVESTIGATION WITH A PROPOSED BENCHMARK)** Valmeekam et al. (2023)
+      - `[paper] <https://arxiv.org/pdf/2302.06706>`__ `[code] <https://github.com/karthikv792/LLMs-Planning>`__
+    * - **ALFWorld: Aligning Text and Embodied Environments for Interactive Learning** Shridhar et al. (2021)
+      - `[paper] <https://arxiv.org/abs/2010.03768>`__ `[code] <https://github.com/alfworld/alfworld>`__
+    * - **Leveraging Pre-trained Large Language Models to Construct and Utilize World Models for Model-based Task Planning** (Household) Guan et al. (2023)
+      - `[paper] <https://arxiv.org/abs/2305.14909>`__ `[code] <https://github.com/GuanSuns/LLMs-World-Models-for-Planning>`__
+    * - **TravelPlanner: A Benchmark for Real-World Planning with Language Agents** Xie et al. (2024)
+      - `[paper] <https://openreview.net/forum?id=l5XQzNkAOe>`__ `[code] <https://github.com/OSU-NLP-Group/TravelPlanner>`__
+    * - **NATURAL PLAN: Benchmarking LLMs on Natural Language Planning** Zheng et al. (2024)
+      - `[paper] <https://arxiv.org/abs/2406.04520>`__ `[code] <https://github.com/google-deepmind/natural-plan>`__
+    * - **PlanBench: An Extensible Benchmark for Evaluating Large Language Models on Planning and Reasoning about Change** Valmeekam et al. (2023)
+      - `[paper] <https://papers.nips.cc/paper_files/paper/2023/hash/7a92bcdede88c7afd108072faf5485c8-Abstract-Datasets_and_Benchmarks.html>`__ `[code] <https://github.com/karthikv792/LLMs-Planning>`__
+    * - **ACPBench: Reasoning about Action, Change, and Planning** Kokel et al. (2024)
+      - `[paper] <https://arxiv.org/abs/2410.05669>`__ `[code] <https://github.com/IBM/ACPBench>`__
+    * - **Automating the Generation of Prompts for LLM-based Action Choice in PDDL Planning** Stein et al. (2023)
+      - `[paper] <https://arxiv.org/abs/2311.09830>`__ `[code] <https://github.com/minecraft-saar/autoplanbench>`__
+    * - **Exploring and Benchmarking the Planning Capabilities of Large Language Models** Bohnet et al. (2024)
+      - `[paper] <https://arxiv.org/abs/2406.13094>`__
+    * - **A Roadmap to Guide the Integration of LLMs in Hierarchical Planning** Puerta-Merino et al. (2025)
+      - `[paper] <https://arxiv.org/abs/2501.08068>`__ `[code] <https://github.com/Corkiray/HTN-LLM>`__
 
 .. raw:: html
 
