@@ -55,8 +55,6 @@ This section presents a taxonomy of research within Model Construction, organize
       - `[paper] <https://arxiv.org/abs/2409.12262>`__
     * - **"LaMMA-P: Generalizable Multi-Agent Long-Horizon Task Allocation and Planning with LM-Driven PDDL Planner"** Zhang et al. (2024)
       - `[paper] <https://arxiv.org/abs/2409.20560>`__ `[code] <https://drive.google.com/drive/folders/1dFfwJve4isw8E92bEQCSxIcQLmax-mqM>`__
-    * - 
-      - `[paper] <>`__ `[code] <>`__
 
 .. raw:: html
 
@@ -90,8 +88,6 @@ This section presents a taxonomy of research within Model Construction, organize
       - `[paper] <https://arxiv.org/abs/2409.12278>`__
     * - **"Planning in the Dark: LLM-Symbolic Planning Pipeline without Experts"** Huang et al. (2024)
       - `[paper] <https://arxiv.org/abs/2409.15915>`__ `[code] <https://github.com/Sino-Huang/Official-LLM-Symbolic-Planning-without-Experts>`__
-    * - 
-      - `[paper] <>`__ `[code] <>`__
 
 .. raw:: html
 
@@ -129,8 +125,6 @@ This section presents a taxonomy of research within Model Construction, organize
       - `[paper] <https://arxiv.org/abs/2404.07751>`__
     * - **"Large Language Models as Planning Domain Generators"** Oswald et al. (2024)
       - `[paper] <https://arxiv.org/abs/2405.06650>`__ `[code] <https://github.com/IBM/NL2PDDL>`__
-    * - 
-      - `[paper] <>`__ `[code] <>`__
 
 .. raw:: html
 
@@ -153,10 +147,8 @@ This section presents a taxonomy of research within Model Construction, organize
       - `[paper] <https://arxiv.org/abs/2311.13720>`__
     * - **"Traversing the Linguistic Divide: Aligning Semantically Equivalent Fluents Through Model Refinement"** Sikes et al. (2024)
       - `[paper] <https://drive.google.com/file/d/1gd7DOHY6ztiTO1jllDOmP-V8V-q1N0uG/view>`__
-    * - **https://elib.uni-stuttgart.de/server/api/core/bitstreams/efc35e23-7aec-4056-8de6-a56ba5b53249/content** Patil (2024)
+    * - **LLMs for AI Planning: A Study on Error Detection and Correction in PDDL Domain Models** Patil (2024)
       - `[paper] <https://elib.uni-stuttgart.de/server/api/core/bitstreams/efc35e23-7aec-4056-8de6-a56ba5b53249/content>`__
-    * - 
-      - `[paper] <>`__ `[code] <>`__
 
 .. raw:: html
 
