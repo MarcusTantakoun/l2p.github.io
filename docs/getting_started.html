@@ -332,7 +332,7 @@
 <span class="linenos">19</span>    <span class="s2">&quot;be placed on the table or placed atop another block. Because of this, &quot;</span> \
 <span class="linenos">20</span>    <span class="s2">&quot;any blocks that are, at a given time, under another block cannot be moved.&quot;</span>
 <span class="linenos">21</span>
-<span class="linenos">22</span><span class="c1"># extract predicates via LLM</span>
+<span class="linenos">22</span><span class="c1"># extract types via LLM</span>
 <span class="linenos">23</span><span class="n">types</span><span class="p">,</span> <span class="n">llm_output</span><span class="p">,</span> <span class="n">validation_info</span> <span class="o">=</span> <span class="n">domain_builder</span><span class="o">.</span><span class="n">formalize_types</span><span class="p">(</span>
 <span class="linenos">24</span>    <span class="n">model</span><span class="o">=</span><span class="n">gpt_4o_mini</span><span class="p">,</span>
 <span class="linenos">25</span>    <span class="n">domain_desc</span><span class="o">=</span><span class="n">domain_desc</span><span class="p">,</span>

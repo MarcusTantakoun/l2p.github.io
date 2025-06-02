@@ -92,7 +92,7 @@ Build PDDL domain components using the ``DomainBuilder`` class. This is an examp
         "be placed on the table or placed atop another block. Because of this, " \
         "any blocks that are, at a given time, under another block cannot be moved."
 
-    # extract predicates via LLM
+    # extract types via LLM
     types, llm_output, validation_info = domain_builder.formalize_types(
         model=gpt_4o_mini,
         domain_desc=domain_desc,
