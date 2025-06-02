@@ -1,8 +1,20 @@
 Paper Recreations
 =================
-This library is a collection of tools for PDDL model generation extracted from natural language driven by large language models. This library is an expansion from the survey paper `"LLMs as Planning Formalizers: A Survey for Leveraging Large Language Models to Construct Automated Planning Models" <https://arxiv.org/abs/2503.18971v1>`_. Papers that have been reconstructed so far and can be found in the `Github <https://github.com/AI-Planning/l2p>`_ repo. 
+This library is a collection of tools for PDDL model generation extracted from natural language driven by large language models. This library is an expansion from the survey paper `"LLMs as Planning Formalizers: A Survey for Leveraging Large Language Models to Construct Automated Planning Models" <https://arxiv.org/abs/2503.18971v1>`_. 
 
-To see full list of current up-to-date papers in literature, please visit (see :doc:`paper_feed`). This list will be continuously updated.
+The following are papers that have been reconstructed so far. This list will be updated in the future.
+
+    + [x] `P+S` `[paper] <https://arxiv.org/abs/2205.05718>`__
+    + [x] `LLM+P` `[paper] <https://arxiv.org/abs/2304.11477>`__
+    + [x] `PROC2PDDL` `[paper] <https://arxiv.org/abs/2403.00092>`__
+    + [x] `LLM+DM` `[paper] <https://arxiv.org/abs/2305.14909>`__
+    + [x] `NL2PLAN` `[paper] <https://arxiv.org/abs/2405.04215>`__
+    + [x] `TEXT2WORLD` `[paper] <https://arxiv.org/abs/2502.13092>`__
+    + [x] `JS-PDDL` `[paper] <https://openreview.net/forum?id=VyTxXSPmbE&referrer=%5Bthe%20profile%20of%20Kelsey%20Sikes%5D(%2Fprofile%3Fid%3D~Kelsey_Sikes1)>`__
+
+Papers that have been reconstructed so far and can be found in the `Github <https://github.com/AI-Planning/l2p>`_ repo. To see full list of current up-to-date papers in literature, please visit (see :doc:`paper_feed`). This list will be continuously updated.
+
+----
 
 Below is L2P code reconstruction of "action-by-action algorithm" from `"Leveraging Pre-trained Large Language Models to Construct and Utilize World Models for Model-based Task Planning" <https://arxiv.org/abs/2305.14909>`_:
 
