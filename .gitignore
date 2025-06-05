@@ -70,6 +70,7 @@ instance/
 
 # Sphinx documentation
 # docs/source/_build
+l2p/
 
 # PyBuilder
 .pybuilder/

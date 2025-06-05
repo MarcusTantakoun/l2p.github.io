@@ -242,9 +242,9 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for l2p.utils.pddl_planner</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">L2P comes pre-packaged with FastDownward: https://www.fast-downward.org </span>
+<span class="sd">L2P is compatible with FastDownward: https://www.fast-downward.org</span>
 
-<span class="sd">For usage, users must clone or download the submodule /downward separately and direct the </span>
+<span class="sd">For usage, users must clone or download the submodule /downward separately and direct the</span>
 <span class="sd">`planner_path` to the folder. This module is not necessary to use L2P, but for ease of use</span>
 <span class="sd">to produce plans from generated domain and problem PDDL specifications via LLMs.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -293,14 +293,14 @@
 <span class="sd">        Main function to run planner.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            - domain_file (str): PDDL domain file path</span>
-<span class="sd">            - problem_file (str): PDDL problem file path</span>
-<span class="sd">            - search_alg (str): search algorithm/heuristic to use</span>
+<span class="sd">            domain_file (str): PDDL domain file path</span>
+<span class="sd">            problem_file (str): PDDL problem file path</span>
+<span class="sd">            search_alg (str): search algorithm/heuristic to use</span>
 <span class="sd">                + refer to: https://www.fast-downward.org/PlannerUsage</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            - success (bool): if a plan was found, otherwise False for incomplete.</span>
-<span class="sd">            - plan_output (str): plan output information.</span>
+<span class="sd">            success (bool): if a plan was found, otherwise False for incomplete.</span>
+<span class="sd">            plan_output (str): plan output information.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>

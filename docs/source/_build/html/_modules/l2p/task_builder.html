@@ -242,12 +242,19 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for l2p.task_builder</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">This file contains collection of functions for PDDL task generation purposes</span>
+<span class="sd">PDDL Problem Formalization/Generation Functions</span>
+
+<span class="sd">This module defines the `TaskBuilder` class and related utilities for constructing</span>
+<span class="sd">PDDL problem specifications programatically.</span>
+
+<span class="sd">Refer to: https://marcustantakoun.github.io/l2p.github.io/l2p.html for more information</span>
+<span class="sd">how to use class functions. Refer to /templates in: https://github.com/AI-Planning/l2p</span>
+<span class="sd">for how to structurally prompt LLMs so they are compatible with class function parsing.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.llm_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLM</span><span class="p">,</span> <span class="n">require_llm</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.llm</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseLLM</span><span class="p">,</span> <span class="n">require_llm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 
 
 <div class="viewcode-block" id="TaskBuilder">
@@ -260,392 +267,481 @@
         <span class="n">objects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">initial</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">goal</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes a task builder object</span>
+<span class="sd">        Initializes an L2P task builder object.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            objects (dict[str,str]): current dictionary of task objects in model</span>
-<span class="sd">            initial (list[dict[str,str]]): current initial states in model</span>
-<span class="sd">            goal (list[dict[str,str]]): current goal states in model</span>
+<span class="sd">            objects (dict[str,str]): current dictionary of task objects in specification</span>
+<span class="sd">            initial (list[dict[str,str]]): current initial states in specification</span>
+<span class="sd">            goal (list[dict[str,str]]): current goal states in specification</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="n">objects</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="n">initial</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="o">=</span> <span class="n">goal</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="n">objects</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="n">initial</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="o">=</span> <span class="n">goal</span> <span class="ow">or</span> <span class="p">[]</span></div>
 
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract functions&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Formalize/generate functions&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TaskBuilder.extract_objects">
-<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.extract_objects">[docs]</a>
+<div class="viewcode-block" id="TaskBuilder.formalize_objects">
+<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.formalize_objects">[docs]</a>
     <span class="nd">@require_llm</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">extract_objects</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">formalize_objects</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">LLM</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">BaseLLM</span><span class="p">,</span>
         <span class="n">problem_desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">prompt_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">predicates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Predicate</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">constants</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">syntax_validator</span><span class="p">:</span> <span class="n">SyntaxValidator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Extracts objects with given predicates in current model</span>
+<span class="sd">        Formalizes PDDL :objects via LLM.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (LLM): LLM</span>
-<span class="sd">            problem_desc (str): problem description</span>
-<span class="sd">            domain_desc (str): domain description</span>
-<span class="sd">            prompt_template (str): prompt template class</span>
-<span class="sd">            types (dict[str,str]): current types in model</span>
-<span class="sd">            predicates (list[Predicate]): list of predicates in current model</span>
+<span class="sd">            model (BaseLLM): LLM to query</span>
+<span class="sd">            problem_desc (str): general problem description</span>
+<span class="sd">            prompt_template (str): structured prompt template for :objects extraction</span>
+<span class="sd">            types (dict[str,str] | list[dict[str,str]]): current types in specification, defaults to None</span>
+<span class="sd">            constants (dict[str,str]): current constants in specification, defaults to None</span>
+<span class="sd">            syntax_validator (SyntaxValidator): syntax checker for generated objects, defaults to None</span>
 <span class="sd">            max_retries (int): max # of retries if failure occurs</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            objects (dict[str,str]): dictionary of object types {name:description}</span>
-<span class="sd">            llm_response (str): the raw string LLM response</span>
+<span class="sd">            objects (dict[str,str]): dictionary of object types {&lt;name&gt;: &lt;type&gt;}</span>
+<span class="sd">            llm_output (str): the raw string BaseLLM response</span>
+<span class="sd">            validation_info (tuple[bool,str]): validation info containing pass flag and error message</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># replace prompt placeholders</span>
-        <span class="n">predicate_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">pred</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">pred</span><span class="p">[</span><span class="s1">&#39;desc&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">pred</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">predicates</span>
-            <span class="k">else</span> <span class="s2">&quot;No predicates provided.&quot;</span>
+        <span class="n">types_str</span> <span class="o">=</span> <span class="n">pretty_print_dict</span><span class="p">(</span><span class="n">types</span><span class="p">)</span> <span class="k">if</span> <span class="n">types</span> <span class="k">else</span> <span class="s2">&quot;No types provided.&quot;</span>
+        <span class="n">const_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">format_constants</span><span class="p">(</span><span class="n">constants</span><span class="p">)</span> <span class="k">if</span> <span class="n">constants</span> <span class="k">else</span> <span class="s2">&quot;No constants provided.&quot;</span>
         <span class="p">)</span>
-        <span class="n">types_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">types</span><span class="p">)</span> <span class="k">if</span> <span class="n">types</span> <span class="k">else</span> <span class="s2">&quot;No types provided.&quot;</span>
 
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{types}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">types_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{predicates}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">predicate_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{problem_desc}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">problem_desc</span><span class="p">)</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{problem_desc}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">problem_desc</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{types}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">types_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{constants}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">const_str</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># iterate through attempts in case of extraction failure</span>
         <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">model</span><span class="o">.</span><span class="n">reset_tokens</span><span class="p">()</span>
-
-                <span class="n">llm_response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">prompt_template</span><span class="p">)</span>  <span class="c1"># get LLM response</span>
+                <span class="n">llm_output</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">)</span>  <span class="c1"># get BaseLLM response</span>
 
                 <span class="c1"># extract respective types from response</span>
-                <span class="n">objects</span> <span class="o">=</span> <span class="n">parse_objects</span><span class="p">(</span><span class="n">llm_response</span><span class="p">)</span>
+                <span class="n">objects</span> <span class="o">=</span> <span class="n">parse_objects</span><span class="p">(</span><span class="n">llm_output</span><span class="o">=</span><span class="n">llm_output</span><span class="p">)</span>
 
-                <span class="k">return</span> <span class="n">objects</span><span class="p">,</span> <span class="n">llm_response</span>
+                <span class="c1"># run syntax validation if applicable</span>
+                <span class="n">validation_info</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;All validations passed.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">syntax_validator</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">error_type</span> <span class="ow">in</span> <span class="n">syntax_validator</span><span class="o">.</span><span class="n">error_types</span><span class="p">:</span>
+                        <span class="n">validator</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">syntax_validator</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">error_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">validator</span><span class="p">):</span>
+                            <span class="k">continue</span>
+
+                        <span class="c1"># dispatch based on expected arguments</span>
+                        <span class="k">if</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_header&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">llm_output</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_duplicate_headers&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">llm_output</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_unsupported_keywords&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">llm_output</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_task_objects&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">types</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">validation_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="k">return</span> <span class="n">objects</span><span class="p">,</span> <span class="n">llm_output</span><span class="p">,</span> <span class="n">validation_info</span>
+
+                <span class="k">return</span> <span class="n">objects</span><span class="p">,</span> <span class="n">llm_output</span><span class="p">,</span> <span class="n">validation_info</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Error encountered: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Retrying </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">...&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Error on attempt </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;LLM Output:</span><span class="se">\n</span><span class="si">{</span><span class="n">llm_output</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="s1">&#39;llm_output&#39;</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">locals</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;None&#39;</span><span class="si">}</span><span class="se">\n</span><span class="s2">Retrying...</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># add a delay before retrying</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Max retries exceeded. Failed to extract objects.&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="TaskBuilder.extract_initial_state">
-<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.extract_initial_state">[docs]</a>
+<div class="viewcode-block" id="TaskBuilder.formalize_initial_state">
+<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.formalize_initial_state">[docs]</a>
     <span class="nd">@require_llm</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">extract_initial_state</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">formalize_initial_state</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">LLM</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">BaseLLM</span><span class="p">,</span>
         <span class="n">problem_desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">prompt_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">predicates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Predicate</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">objects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">initial</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">goal</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">constants</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">predicates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Predicate</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">functions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Function</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">objects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">initial</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">goal</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">syntax_validator</span><span class="p">:</span> <span class="n">SyntaxValidator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Extracts initial states with given predicates, objects, and states in current model</span>
+<span class="sd">        Formalizes PDDL :init states via LLM.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (LLM): LLM</span>
-<span class="sd">            problem_desc (str): problem description</span>
-<span class="sd">            domain_desc (str): domain description</span>
-<span class="sd">            prompt_template (str): prompt template class</span>
-<span class="sd">            types (dict[str,str]): current types in model</span>
-<span class="sd">            predicates (list[Predicate]): current list of predicates in model</span>
-<span class="sd">            objects (dict[str,str]): current dictionary of task objects in model</span>
-<span class="sd">            initial (list[dict[str,str]]): current initial states in model</span>
-<span class="sd">            goal (list[dict[str,str]]): current goal states in model</span>
+<span class="sd">            model (BaseLLM): LLM to query</span>
+<span class="sd">            problem_desc (str): general problem description</span>
+<span class="sd">            prompt_template (str): structured prompt template for :init extraction</span>
+<span class="sd">            types (dict[str,str] | list[dict[str,str]]): current types in domain, defaults to None</span>
+<span class="sd">            constants (dict[str,str]): current constants in specification, defaults to None</span>
+<span class="sd">            predicates (list[Predicate]): list of current predicates in domain, defaults to None</span>
+<span class="sd">            functions (list[Function]): list of current functions in specification, defaults to None</span>
+<span class="sd">            objects (dict[str,str]): current dictionary of task :objects in specification, defaults to None</span>
+<span class="sd">            initial (list[dict[str,str]]): current :init states in specification, defaults to None</span>
+<span class="sd">            goal (list[dict[str,str]]): current :goal states in specification, defaults to None</span>
+<span class="sd">            syntax_validator (SyntaxValidator): syntax checker for generated initial states, defaults to None</span>
 <span class="sd">            max_retries (int): max # of retries if failure occurs</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            initial (list[dict[str,str]]): list of dictionary of initial states [{predicate,params,neg}]</span>
-<span class="sd">            llm_response (str): the raw string LLM response</span>
+<span class="sd">            initial (list[dict[str,str]]): list of dictionaries containing initial states consisting of:</span>
+<span class="sd">                {&lt;predicate_name&gt;:&lt;str&gt;, &lt;params&gt;:&lt;list[str]&gt;, &lt;neg&gt;:&lt;bool&gt;} OR</span>
+<span class="sd">                {&lt;function_name&gt;:&lt;str&gt;, &lt;params&gt;:&lt;list[str]&gt;, &lt;value&gt;:&lt;int&gt;, &lt;op&gt;:&lt;str&gt;}</span>
+<span class="sd">            llm_output (str): the raw string BaseLLM response</span>
+<span class="sd">            validation_info (tuple[bool,str]): validation info containing pass flag and error message</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># replace prompt placeholders</span>
-        <span class="n">predicate_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">format_predicates</span><span class="p">(</span><span class="n">predicates</span><span class="p">)</span> <span class="k">if</span> <span class="n">predicates</span> <span class="k">else</span> <span class="s2">&quot;No predicates provided.&quot;</span>
+        <span class="n">types_str</span> <span class="o">=</span> <span class="n">pretty_print_dict</span><span class="p">(</span><span class="n">types</span><span class="p">)</span> <span class="k">if</span> <span class="n">types</span> <span class="k">else</span> <span class="s2">&quot;No types provided.&quot;</span>
+        <span class="n">const_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">format_constants</span><span class="p">(</span><span class="n">constants</span><span class="p">)</span> <span class="k">if</span> <span class="n">constants</span> <span class="k">else</span> <span class="s2">&quot;No constants provided.&quot;</span>
         <span class="p">)</span>
-        <span class="n">types_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">types</span><span class="p">)</span> <span class="k">if</span> <span class="n">types</span> <span class="k">else</span> <span class="s2">&quot;No types provided.&quot;</span>
-        <span class="n">objects_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">format_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="k">if</span> <span class="n">objects</span> <span class="k">else</span> <span class="s2">&quot;No objects provided.&quot;</span>
+        <span class="n">preds_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pred</span><span class="p">[</span><span class="s1">&#39;raw&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">pred</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">predicates</span>
+            <span class="k">else</span> <span class="s2">&quot;No predicates provided.&quot;</span>
         <span class="p">)</span>
-        <span class="n">initial_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">format_initial</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span> <span class="k">if</span> <span class="n">initial</span> <span class="k">else</span> <span class="s2">&quot;No initial state provided.&quot;</span>
+        <span class="n">funcs_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="p">[</span><span class="s1">&#39;raw&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">functions</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">functions</span>
+            <span class="k">else</span> <span class="s2">&quot;No functions provided.&quot;</span>
         <span class="p">)</span>
-        <span class="n">goal_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_goal</span><span class="p">(</span><span class="n">goal</span><span class="p">)</span> <span class="k">if</span> <span class="n">goal</span> <span class="k">else</span> <span class="s2">&quot;No goal state provided.&quot;</span>
+        <span class="n">obj_str</span> <span class="o">=</span> <span class="n">format_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="k">if</span> <span class="n">objects</span> <span class="k">else</span> <span class="s2">&quot;No objects provided.&quot;</span>
+        <span class="n">init_str</span> <span class="o">=</span> <span class="n">format_initial</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span> <span class="k">if</span> <span class="n">initial</span> <span class="k">else</span> <span class="s2">&quot;No initial state provided.&quot;</span>
+        <span class="n">goal_str</span> <span class="o">=</span> <span class="n">format_goal</span><span class="p">(</span><span class="n">goal</span><span class="p">)</span> <span class="k">if</span> <span class="n">goal</span> <span class="k">else</span> <span class="s2">&quot;No goal state provided.&quot;</span>
 
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{types}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">types_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{predicates}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">predicate_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{objects}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">objects_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{initial_state}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">initial_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{goal_state}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">goal_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{problem_desc}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">problem_desc</span><span class="p">)</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{problem_desc}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">problem_desc</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{types}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">types_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{constants}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">const_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{predicates}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">preds_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{functions}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">funcs_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{objects}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">obj_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{initial_state}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">init_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{goal_state}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">goal_str</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># iterate through attempts in case of extraction failure</span>
         <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">model</span><span class="o">.</span><span class="n">reset_tokens</span><span class="p">()</span>
-
-                <span class="n">llm_response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">prompt_template</span><span class="p">)</span>
+                <span class="n">llm_output</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">)</span>
 
                 <span class="c1"># extract respective types from response</span>
-                <span class="n">initial</span> <span class="o">=</span> <span class="n">parse_initial</span><span class="p">(</span><span class="n">llm_response</span><span class="p">)</span>
+                <span class="n">initial</span> <span class="o">=</span> <span class="n">parse_initial</span><span class="p">(</span><span class="n">llm_output</span><span class="o">=</span><span class="n">llm_output</span><span class="p">)</span>
 
-                <span class="k">return</span> <span class="n">initial</span><span class="p">,</span> <span class="n">llm_response</span>
+                <span class="c1"># run syntax validation if applicable</span>
+                <span class="n">validation_info</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;All validations passed.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">syntax_validator</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">error_type</span> <span class="ow">in</span> <span class="n">syntax_validator</span><span class="o">.</span><span class="n">error_types</span><span class="p">:</span>
+                        <span class="n">validator</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">syntax_validator</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">error_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">validator</span><span class="p">):</span>
+                            <span class="k">continue</span>
+
+                        <span class="c1"># dispatch based on expected arguments</span>
+                        <span class="k">if</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_header&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">llm_output</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_duplicate_headers&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">llm_output</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_unsupported_keywords&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">llm_output</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_task_states&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span>
+                                <span class="n">initial</span><span class="p">,</span> <span class="n">objects</span><span class="p">,</span> <span class="n">predicates</span><span class="p">,</span> <span class="s2">&quot;initial&quot;</span>
+                            <span class="p">)</span>
+
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">validation_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="k">return</span> <span class="n">initial</span><span class="p">,</span> <span class="n">llm_output</span><span class="p">,</span> <span class="n">validation_info</span>
+
+                <span class="k">return</span> <span class="n">initial</span><span class="p">,</span> <span class="n">llm_output</span><span class="p">,</span> <span class="n">validation_info</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Error encountered: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Retrying </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">...&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Error on attempt </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;LLM Output:</span><span class="se">\n</span><span class="si">{</span><span class="n">llm_output</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="s1">&#39;llm_output&#39;</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">locals</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;None&#39;</span><span class="si">}</span><span class="se">\n</span><span class="s2">Retrying...</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># add a delay before retrying</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Max retries exceeded. Failed to extract initial states.&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="TaskBuilder.extract_goal_state">
-<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.extract_goal_state">[docs]</a>
+<div class="viewcode-block" id="TaskBuilder.formalize_goal_state">
+<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.formalize_goal_state">[docs]</a>
     <span class="nd">@require_llm</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">extract_goal_state</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">formalize_goal_state</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">LLM</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">BaseLLM</span><span class="p">,</span>
         <span class="n">problem_desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">prompt_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">predicates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Predicate</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">objects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">initial</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">goal</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">constants</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">predicates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Predicate</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">functions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Function</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">objects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">initial</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">goal</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">syntax_validator</span><span class="p">:</span> <span class="n">SyntaxValidator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Extracts goal states with given predicates, objects, and states in current model</span>
+<span class="sd">        Formalizes PDDL :goal states via LLM.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (LLM): LLM</span>
-<span class="sd">            problem_desc (str): problem description</span>
-<span class="sd">            domain_desc (str): domain description</span>
-<span class="sd">            prompt_template (str): prompt template class</span>
-<span class="sd">            types (dict[str,str]): current types in model</span>
-<span class="sd">            predicates (list[Predicate]): current list of predicates in model</span>
-<span class="sd">            objects (dict[str,str]): current dictionary of task objects in model</span>
-<span class="sd">            initial (list[dict[str,str]]): current initial states in model</span>
-<span class="sd">            goal (list[dict[str,str]]): current goal states in model</span>
+<span class="sd">            model (BaseLLM): LLM to query</span>
+<span class="sd">            problem_desc (str): general problem description</span>
+<span class="sd">            prompt_template (str): structured prompt template for :goal extraction</span>
+<span class="sd">            types (dict[str,str] | list[dict[str,str]]): current :types in domain, defaults to None</span>
+<span class="sd">            constants (dict[str,str]): current constants in specification, defaults to None</span>
+<span class="sd">            predicates (list[Predicate]): list of current predicates in domain, defaults to None</span>
+<span class="sd">            functions (list[Function]): list of current functions in specification, defaults to None</span>
+<span class="sd">            objects (dict[str,str]): current dictionary of task :objects in specification, defaults to None</span>
+<span class="sd">            initial (list[dict[str,str]]): current :init states in specification, defaults to None</span>
+<span class="sd">            goal (list[dict[str,str]]): current :goal states in specification, defaults to None</span>
+<span class="sd">            syntax_validator (SyntaxValidator): syntax checker for generated goal states, defaults to None</span>
 <span class="sd">            max_retries (int): max # of retries if failure occurs</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            goal (list[dict[str,str]]): list of dictionary of goal states [{predicate,params,neg}]</span>
-<span class="sd">            llm_response (str): the raw string LLM response</span>
+<span class="sd">            goal (list[dict[str,str]]): list of dictionaries containing goal states consisting of:</span>
+<span class="sd">                {&lt;predicate_name&gt;:&lt;str&gt;, &lt;params&gt;:&lt;list[str]&gt;, &lt;neg&gt;:&lt;bool&gt;} OR</span>
+<span class="sd">                {&lt;function_name&gt;:&lt;str&gt;, &lt;params&gt;:&lt;list[str]&gt;, &lt;value&gt;:&lt;int&gt;, &lt;op&gt;:&lt;str&gt;}</span>
+<span class="sd">            llm_output (str): the raw string BaseLLM response</span>
+<span class="sd">            validation_info (tuple[bool,str]): validation info containing pass flag and error message</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># replace prompt placeholders</span>
-        <span class="n">predicate_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">format_predicates</span><span class="p">(</span><span class="n">predicates</span><span class="p">)</span> <span class="k">if</span> <span class="n">predicates</span> <span class="k">else</span> <span class="s2">&quot;No predicates provided.&quot;</span>
+        <span class="n">types_str</span> <span class="o">=</span> <span class="n">pretty_print_dict</span><span class="p">(</span><span class="n">types</span><span class="p">)</span> <span class="k">if</span> <span class="n">types</span> <span class="k">else</span> <span class="s2">&quot;No types provided.&quot;</span>
+        <span class="n">const_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">format_constants</span><span class="p">(</span><span class="n">constants</span><span class="p">)</span> <span class="k">if</span> <span class="n">constants</span> <span class="k">else</span> <span class="s2">&quot;No constants provided.&quot;</span>
         <span class="p">)</span>
-        <span class="n">types_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">types</span><span class="p">)</span> <span class="k">if</span> <span class="n">types</span> <span class="k">else</span> <span class="s2">&quot;No types provided.&quot;</span>
-        <span class="n">objects_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">format_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="k">if</span> <span class="n">objects</span> <span class="k">else</span> <span class="s2">&quot;No objects provided.&quot;</span>
+        <span class="n">preds_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pred</span><span class="p">[</span><span class="s1">&#39;raw&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">pred</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">predicates</span>
+            <span class="k">else</span> <span class="s2">&quot;No predicates provided.&quot;</span>
         <span class="p">)</span>
-        <span class="n">initial_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">format_initial</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span> <span class="k">if</span> <span class="n">initial</span> <span class="k">else</span> <span class="s2">&quot;No initial state provided.&quot;</span>
+        <span class="n">funcs_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="p">[</span><span class="s1">&#39;raw&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">functions</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">functions</span>
+            <span class="k">else</span> <span class="s2">&quot;No functions provided.&quot;</span>
         <span class="p">)</span>
-        <span class="n">goal_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_goal</span><span class="p">(</span><span class="n">goal</span><span class="p">)</span> <span class="k">if</span> <span class="n">goal</span> <span class="k">else</span> <span class="s2">&quot;No goal state provided.&quot;</span>
+        <span class="n">obj_str</span> <span class="o">=</span> <span class="n">format_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="k">if</span> <span class="n">objects</span> <span class="k">else</span> <span class="s2">&quot;No objects provided.&quot;</span>
+        <span class="n">init_str</span> <span class="o">=</span> <span class="n">format_initial</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span> <span class="k">if</span> <span class="n">initial</span> <span class="k">else</span> <span class="s2">&quot;No initial state provided.&quot;</span>
+        <span class="n">goal_str</span> <span class="o">=</span> <span class="n">format_goal</span><span class="p">(</span><span class="n">goal</span><span class="p">)</span> <span class="k">if</span> <span class="n">goal</span> <span class="k">else</span> <span class="s2">&quot;No goal state provided.&quot;</span>
 
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{types}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">types_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{predicates}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">predicate_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{objects}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">objects_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{initial_state}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">initial_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{goal_state}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">goal_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{problem_desc}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">problem_desc</span><span class="p">)</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{problem_desc}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">problem_desc</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{types}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">types_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{constants}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">const_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{predicates}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">preds_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{functions}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">funcs_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{objects}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">obj_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{initial_state}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">init_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{goal_state}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">goal_str</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># iterate through attempts in case of extraction failure</span>
         <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">model</span><span class="o">.</span><span class="n">reset_tokens</span><span class="p">()</span>
-
-                <span class="n">llm_response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">prompt_template</span><span class="p">)</span>
+                <span class="n">llm_output</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">)</span>
 
                 <span class="c1"># extract respective types from response</span>
-                <span class="n">goal</span> <span class="o">=</span> <span class="n">parse_goal</span><span class="p">(</span><span class="n">llm_response</span><span class="p">)</span>
+                <span class="n">goal</span> <span class="o">=</span> <span class="n">parse_goal</span><span class="p">(</span><span class="n">llm_output</span><span class="o">=</span><span class="n">llm_output</span><span class="p">)</span>
 
-                <span class="k">return</span> <span class="n">goal</span><span class="p">,</span> <span class="n">llm_response</span>
+                <span class="c1"># run syntax validation if applicable</span>
+                <span class="n">validation_info</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;All validations passed.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">syntax_validator</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">error_type</span> <span class="ow">in</span> <span class="n">syntax_validator</span><span class="o">.</span><span class="n">error_types</span><span class="p">:</span>
+                        <span class="n">validator</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">syntax_validator</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">error_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">validator</span><span class="p">):</span>
+                            <span class="k">continue</span>
+
+                        <span class="c1"># dispatch based on expected arguments</span>
+                        <span class="k">if</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_header&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">llm_output</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_duplicate_headers&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">llm_output</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_unsupported_keywords&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">llm_output</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_task_states&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span>
+                                <span class="n">goal</span><span class="p">,</span> <span class="n">objects</span><span class="p">,</span> <span class="n">predicates</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span>
+                            <span class="p">)</span>
+
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">validation_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="k">return</span> <span class="n">goal</span><span class="p">,</span> <span class="n">llm_output</span><span class="p">,</span> <span class="n">validation_info</span>
+
+                <span class="k">return</span> <span class="n">goal</span><span class="p">,</span> <span class="n">llm_output</span><span class="p">,</span> <span class="n">validation_info</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Error encountered: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Retrying </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">...&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Error on attempt </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;LLM Output:</span><span class="se">\n</span><span class="si">{</span><span class="n">llm_output</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="s1">&#39;llm_output&#39;</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">locals</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;None&#39;</span><span class="si">}</span><span class="se">\n</span><span class="s2">Retrying...</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># add a delay before retrying</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Max retries exceeded. Failed to extract goal states.&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="TaskBuilder.extract_task">
-<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.extract_task">[docs]</a>
+<div class="viewcode-block" id="TaskBuilder.formalize_task">
+<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.formalize_task">[docs]</a>
     <span class="nd">@require_llm</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">extract_task</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">formalize_task</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">LLM</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">BaseLLM</span><span class="p">,</span>
         <span class="n">problem_desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">prompt_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">predicates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Predicate</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">actions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Action</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">constants</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">predicates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Predicate</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">functions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Function</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">syntax_validator</span><span class="p">:</span> <span class="n">SyntaxValidator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+        <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Extracts whole task specification in current model</span>
+<span class="sd">        Formalizes whole task specification via LLM.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (LLM): LLM</span>
-<span class="sd">            problem_desc (str): problem description</span>
-<span class="sd">            domain_desc (str): domain description</span>
-<span class="sd">            prompt_template (str): prompt template class</span>
-<span class="sd">            types (dict[str,str]): current types in model</span>
-<span class="sd">            predicates (list[Predicate]): current list of predicates in model</span>
-<span class="sd">            actions (list[Action]): current list of Action instances in model</span>
+<span class="sd">            model (BaseLLM): LLM to query</span>
+<span class="sd">            problem_desc (str): general problem description</span>
+<span class="sd">            prompt_template (str): structured prompt template for :problem extraction</span>
+<span class="sd">            types (dict[str,str] | list[dict[str,str]]): current :types in domain, defaults to None</span>
+<span class="sd">            constants (dict[str,str]): current constants in specification, defaults to None</span>
+<span class="sd">            predicates (list[Predicate]): list of current predicates in domain, defaults to None</span>
+<span class="sd">            functions (list[Function]): list of current functions in specification, defaults to None</span>
+<span class="sd">            syntax_validator (SyntaxValidator): syntax checker for generated :problem, defaults to None</span>
 <span class="sd">            max_retries (int): max # of retries if failure occurs</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            objects (dict[str,str]): dictionary of object types {name:description}</span>
-<span class="sd">            initial (list[dict[str,str]]): list of dictionary of initial states [{predicate,params,neg}]</span>
-<span class="sd">            goal (list[dict[str,str]]): list of dictionary of goal states [{predicate,params,neg}]</span>
-<span class="sd">            llm_response (str): the raw string LLM response</span>
+<span class="sd">            objects (dict[str,str]): dictionary of object names and assigned types</span>
+<span class="sd">            initial (list[dict[str,str]]): list of dictionary of initial states</span>
+<span class="sd">            goal (list[dict[str,str]]): list of dictionary of goal states</span>
+<span class="sd">            llm_output (str): the raw string BaseLLM response</span>
+<span class="sd">            validation_info (tuple[bool,str]): validation info containing pass flag and error message</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">model</span><span class="o">.</span><span class="n">reset_tokens</span><span class="p">()</span>
-
-        <span class="c1"># replace prompt placeholders</span>
-        <span class="n">predicate_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">format_predicates</span><span class="p">(</span><span class="n">predicates</span><span class="p">)</span> <span class="k">if</span> <span class="n">predicates</span> <span class="k">else</span> <span class="s2">&quot;No predicates provided.&quot;</span>
+        <span class="n">types_str</span> <span class="o">=</span> <span class="n">pretty_print_dict</span><span class="p">(</span><span class="n">types</span><span class="p">)</span> <span class="k">if</span> <span class="n">types</span> <span class="k">else</span> <span class="s2">&quot;No types provided.&quot;</span>
+        <span class="n">const_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">format_constants</span><span class="p">(</span><span class="n">constants</span><span class="p">)</span> <span class="k">if</span> <span class="n">constants</span> <span class="k">else</span> <span class="s2">&quot;No constants provided.&quot;</span>
         <span class="p">)</span>
-        <span class="n">types_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">types</span><span class="p">)</span> <span class="k">if</span> <span class="n">types</span> <span class="k">else</span> <span class="s2">&quot;No types provided.&quot;</span>
-        <span class="n">action_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">format_action</span><span class="p">(</span><span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">)</span> <span class="k">if</span> <span class="n">actions</span> <span class="k">else</span> <span class="s2">&quot;No actions provided.&quot;</span>
+        <span class="n">preds_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pred</span><span class="p">[</span><span class="s1">&#39;raw&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">pred</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">predicates</span>
+            <span class="k">else</span> <span class="s2">&quot;No predicates provided.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">funcs_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="p">[</span><span class="s1">&#39;raw&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">functions</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">functions</span>
+            <span class="k">else</span> <span class="s2">&quot;No functions provided.&quot;</span>
         <span class="p">)</span>
 
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{types}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">types_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{predicates}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">predicate_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{actions}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">action_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{problem_desc}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">problem_desc</span><span class="p">)</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{problem_desc}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">problem_desc</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{types}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">types_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{constants}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">const_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{predicates}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">preds_str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{functions}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">funcs_str</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># iterate through attempts in case of extraction failure</span>
         <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">model</span><span class="o">.</span><span class="n">reset_tokens</span><span class="p">()</span>
-
-                <span class="n">llm_response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">prompt_template</span><span class="p">)</span>
+                <span class="n">llm_output</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">)</span>
 
                 <span class="c1"># extract respective types from response</span>
-                <span class="n">objects</span> <span class="o">=</span> <span class="n">parse_objects</span><span class="p">(</span><span class="n">llm_response</span><span class="p">)</span>
-                <span class="n">initial</span> <span class="o">=</span> <span class="n">parse_initial</span><span class="p">(</span><span class="n">llm_response</span><span class="p">)</span>
-                <span class="n">goal</span> <span class="o">=</span> <span class="n">parse_goal</span><span class="p">(</span><span class="n">llm_response</span><span class="p">)</span>
+                <span class="n">objects</span> <span class="o">=</span> <span class="n">parse_objects</span><span class="p">(</span><span class="n">llm_output</span><span class="o">=</span><span class="n">llm_output</span><span class="p">)</span>
+                <span class="n">initial</span> <span class="o">=</span> <span class="n">parse_initial</span><span class="p">(</span><span class="n">llm_output</span><span class="o">=</span><span class="n">llm_output</span><span class="p">)</span>
+                <span class="n">goal</span> <span class="o">=</span> <span class="n">parse_goal</span><span class="p">(</span><span class="n">llm_output</span><span class="o">=</span><span class="n">llm_output</span><span class="p">)</span>
 
-                <span class="k">return</span> <span class="n">objects</span><span class="p">,</span> <span class="n">initial</span><span class="p">,</span> <span class="n">goal</span><span class="p">,</span> <span class="n">llm_response</span>
+                <span class="c1"># run syntax validation if applicable</span>
+                <span class="n">validation_info</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;All validations passed.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">syntax_validator</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">error_type</span> <span class="ow">in</span> <span class="n">syntax_validator</span><span class="o">.</span><span class="n">error_types</span><span class="p">:</span>
+                        <span class="n">validator</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">syntax_validator</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">error_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">validator</span><span class="p">):</span>
+                            <span class="k">continue</span>
+
+                        <span class="c1"># dispatch based on expected arguments</span>
+                        <span class="k">if</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_header&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">llm_output</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_duplicate_headers&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">llm_output</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_unsupported_keywords&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">llm_output</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_task_objects&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">types</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;validate_task_states&quot;</span><span class="p">:</span>
+                            <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span>
+                                <span class="n">states</span><span class="o">=</span><span class="n">initial</span><span class="p">,</span>
+                                <span class="n">objects</span><span class="o">=</span><span class="n">objects</span><span class="p">,</span>
+                                <span class="n">predicates</span><span class="o">=</span><span class="n">predicates</span><span class="p">,</span>
+                                <span class="n">functions</span><span class="o">=</span><span class="n">functions</span><span class="p">,</span>
+                                <span class="n">state_type</span><span class="o">=</span><span class="s2">&quot;initial&quot;</span><span class="p">,</span>
+                            <span class="p">)</span>
+                            <span class="k">if</span> <span class="n">validation_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                                <span class="n">validation_info</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span>
+                                    <span class="n">states</span><span class="o">=</span><span class="n">goal</span><span class="p">,</span>
+                                    <span class="n">objects</span><span class="o">=</span><span class="n">objects</span><span class="p">,</span>
+                                    <span class="n">predicates</span><span class="o">=</span><span class="n">predicates</span><span class="p">,</span>
+                                    <span class="n">functions</span><span class="o">=</span><span class="n">functions</span><span class="p">,</span>
+                                    <span class="n">state_type</span><span class="o">=</span><span class="s2">&quot;goal&quot;</span><span class="p">,</span>
+                                <span class="p">)</span>
+
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">validation_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="k">return</span> <span class="n">objects</span><span class="p">,</span> <span class="n">initial</span><span class="p">,</span> <span class="n">goal</span><span class="p">,</span> <span class="n">llm_output</span><span class="p">,</span> <span class="n">validation_info</span>
+
+                <span class="k">return</span> <span class="n">objects</span><span class="p">,</span> <span class="n">initial</span><span class="p">,</span> <span class="n">goal</span><span class="p">,</span> <span class="n">llm_output</span><span class="p">,</span> <span class="n">validation_info</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Error encountered: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Retrying </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">...&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Error on attempt </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;LLM Output:</span><span class="se">\n</span><span class="si">{</span><span class="n">llm_output</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="s1">&#39;llm_output&#39;</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">locals</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;None&#39;</span><span class="si">}</span><span class="se">\n</span><span class="s2">Retrying...</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># add a delay before retrying</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Max retries exceeded. Failed to extract task.&quot;</span><span class="p">)</span></div>
 
 
-    <span class="c1"># NOTE: This function is experimental and may be subject to change in future versions.</span>
-<div class="viewcode-block" id="TaskBuilder.extract_nl_conditions">
-<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.extract_nl_conditions">[docs]</a>
-    <span class="nd">@require_llm</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">extract_nl_conditions</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">LLM</span><span class="p">,</span>
-        <span class="n">problem_desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">prompt_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">predicates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Predicate</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">actions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Action</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">objects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Extracts initial and goal states in natural language</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            model (LLM): LLM</span>
-<span class="sd">            problem_desc (str): problem description</span>
-<span class="sd">            domain_desc (str): domain description</span>
-<span class="sd">            prompt_template (str): prompt template class</span>
-<span class="sd">            types (dict[str,str]): current types in model</span>
-<span class="sd">            predicates (list[Predicate]): current list of predicates in model</span>
-<span class="sd">            actions (list[Action]): current list of Action instances in model</span>
-<span class="sd">            objects (dict[str,str]): current dictionary of task objects in model</span>
-<span class="sd">            max_retries (int): max # of retries if failure occurs</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            llm_response (str): the raw string LLM response</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># replace prompt placeholders</span>
-        <span class="n">predicate_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">format_predicates</span><span class="p">(</span><span class="n">predicates</span><span class="p">)</span> <span class="k">if</span> <span class="n">predicates</span> <span class="k">else</span> <span class="s2">&quot;No predicates provided.&quot;</span>
-        <span class="p">)</span>
-        <span class="n">types_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">types</span><span class="p">)</span> <span class="k">if</span> <span class="n">types</span> <span class="k">else</span> <span class="s2">&quot;No types provided.&quot;</span>
-        <span class="n">objects_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">format_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="k">if</span> <span class="n">objects</span> <span class="k">else</span> <span class="s2">&quot;No objects provided.&quot;</span>
-        <span class="p">)</span>
-        <span class="n">action_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">format_action</span><span class="p">(</span><span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">)</span> <span class="k">if</span> <span class="n">actions</span> <span class="k">else</span> <span class="s2">&quot;No actions provided.&quot;</span>
-        <span class="p">)</span>
-
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{problem_desc}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">problem_desc</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{actions}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">action_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{types}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">types_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{predicates}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">predicate_str</span><span class="p">)</span>
-        <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{objects}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">objects_str</span><span class="p">)</span>
-
-        <span class="c1"># iterate through attempts in case of extraction failure</span>
-        <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">reset_tokens</span><span class="p">()</span>
-
-                <span class="n">llm_response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">prompt_template</span><span class="p">)</span>
-
-                <span class="k">return</span> <span class="n">llm_response</span>
-
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Error encountered: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Retrying </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">...&quot;</span>
-                <span class="p">)</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># add a delay before retrying</span>
-
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Max retries exceeded. Failed to extract NL task states.&quot;</span><span class="p">)</span></div>
-
-
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete function&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete functions&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="TaskBuilder.delete_objects">
 <a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.delete_objects">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">delete_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deletes specific item in :objects from current specification&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">var</span><span class="p">:</span> <span class="n">type_</span> <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">var</span> <span class="o">!=</span> <span class="n">name</span>
+                <span class="n">var</span><span class="p">:</span> <span class="n">type_</span> <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">var</span> <span class="o">!=</span> <span class="nb">object</span>
             <span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="TaskBuilder.delete_initial_state">
 <a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.delete_initial_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_initial_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deletes specific :init state from current specification&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="k">if</span> <span class="n">s</span> <span class="o">!=</span> <span class="n">state</span><span class="p">]</span></div>
 
@@ -653,6 +749,7 @@
 <div class="viewcode-block" id="TaskBuilder.delete_goal_state">
 <a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.delete_goal_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_goal_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deletes specific PDDL :goal state from current specification&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="k">if</span> <span class="n">s</span> <span class="o">!=</span> <span class="n">state</span><span class="p">]</span></div>
 
@@ -662,18 +759,21 @@
 <div class="viewcode-block" id="TaskBuilder.set_objects">
 <a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.set_objects">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_objects</span> <span class="o">=</span> <span class="n">objects</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets PDDL :objects for current specification&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="n">objects</span></div>
 
 
 <div class="viewcode-block" id="TaskBuilder.set_initial">
 <a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.set_initial">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_initial</span> <span class="o">=</span> <span class="n">initial</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets PDDL :init states for current specification&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="n">initial</span></div>
 
 
 <div class="viewcode-block" id="TaskBuilder.set_goal">
 <a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.set_goal">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">goal</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">goal</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets PDDL :goal states for current specification&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="o">=</span> <span class="n">goal</span></div>
 
 
@@ -682,97 +782,57 @@
 <div class="viewcode-block" id="TaskBuilder.get_objects">
 <a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.get_objects">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns PDDL :objects from current specification&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span></div>
 
 
 <div class="viewcode-block" id="TaskBuilder.get_initial">
 <a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.get_initial">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns PDDL :init states from current specification&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span></div>
 
 
 <div class="viewcode-block" id="TaskBuilder.get_goal">
 <a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.get_goal">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns PDDL :goal states from current specification&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal</span></div>
 
 
 <div class="viewcode-block" id="TaskBuilder.generate_task">
 <a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.generate_task">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">generate_task</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">objects</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">initial</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">goal</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">):</span>
-        <span class="c1"># Write problem file</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">domain_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">problem_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">objects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">initial</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">goal</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates PDDL problem from given information.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            domain_name (str): domain name</span>
+<span class="sd">            problem_name (str): specific task instance name</span>
+<span class="sd">            objects (dict[str,str]): PDDL :objects</span>
+<span class="sd">            initial (list[dict[str,str]]): PDDL :init states</span>
+<span class="sd">            goal (list[dict[str,str]]): PDDL :goal states</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            desc (str): PDDL problem in string format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;(define</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   (problem </span><span class="si">{</span><span class="n">problem</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   (:domain </span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s2">)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   (:objects </span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">   )</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   (:init</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">   )</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   (:goal</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="p">(</span><span class="n">goal</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">   )</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   (problem </span><span class="si">{</span><span class="n">problem_name</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   (:domain </span><span class="si">{</span><span class="n">domain_name</span><span class="si">}</span><span class="s2">)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   (:objects </span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="p">(</span><span class="n">format_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">))</span><span class="si">}</span><span class="se">\n</span><span class="s2">   )</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   (:init</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="p">(</span><span class="n">format_initial</span><span class="p">(</span><span class="n">initial</span><span class="p">))</span><span class="si">}</span><span class="se">\n</span><span class="s2">   )</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   (:goal</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="p">(</span><span class="n">format_goal</span><span class="p">(</span><span class="n">goal</span><span class="p">))</span><span class="si">}</span><span class="se">\n</span><span class="s2">   )</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">desc</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
         <span class="n">desc</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;AND&quot;</span><span class="p">,</span> <span class="s2">&quot;and&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;OR&quot;</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">desc</span></div>
-
-
-<div class="viewcode-block" id="TaskBuilder.format_action">
-<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.format_action">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">format_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Action</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
-            <span class="n">param_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="nb">type</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">action</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
-            <span class="p">)</span>  <span class="c1"># name includes ?</span>
-            <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;(:action </span><span class="si">{</span><span class="n">action</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   :parameters (</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="p">(</span><span class="n">param_str</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">   )</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   :precondition</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="s1">&#39;preconditions&#39;</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;   :effect</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="s1">&#39;effects&#39;</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">desc</span> <span class="o">+=</span> <span class="s2">&quot;)</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="n">desc</span></div>
-
-
-<div class="viewcode-block" id="TaskBuilder.format_objects">
-<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.format_objects">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">format_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">objects</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obj</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="nb">type</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="nb">type</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obj</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">objects</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">objects</span></div>
-
-
-<div class="viewcode-block" id="TaskBuilder.format_initial">
-<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.format_initial">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">format_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_states</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">inner_str</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">initial_states</span>
-        <span class="p">]</span>  <span class="c1"># The main part of each predicate</span>
-        <span class="n">full_str</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;(not </span><span class="si">{</span><span class="n">inner</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">if</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;neg&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="n">inner</span>
-            <span class="k">for</span> <span class="n">state</span><span class="p">,</span> <span class="n">inner</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">initial_states</span><span class="p">,</span> <span class="n">inner_str</span><span class="p">)</span>
-        <span class="p">]</span>  <span class="c1"># add `not` if needed</span>
-        <span class="n">initial_states_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">full_str</span>
-        <span class="p">)</span>  <span class="c1"># combine the states into a single string</span>
-
-        <span class="k">return</span> <span class="n">initial_states_str</span></div>
-
-
-<div class="viewcode-block" id="TaskBuilder.format_goal">
-<a class="viewcode-back" href="../../l2p.html#l2p.TaskBuilder.format_goal">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">format_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">goal_states</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">goal_states_str</span> <span class="o">=</span> <span class="s2">&quot;(AND </span><span class="se">\n</span><span class="s2">&quot;</span>
-
-        <span class="c1"># loop through each dictionary in the list</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">goal_states</span><span class="p">:</span>
-            <span class="c1"># extract the name and parameters from the dictionary</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">])</span>
-            <span class="n">goal_states_str</span> <span class="o">+=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;   (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">) </span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1"># append the predicate in the desired format</span>
-            <span class="p">)</span>
-
-        <span class="n">goal_states_str</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
-
-        <span class="k">return</span> <span class="n">goal_states_str</span></div>
 </div>
 
 </pre></div>

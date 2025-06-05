@@ -253,6 +253,8 @@
         <ul>
           <li><a href="l2p.html#l2p.TaskBuilder.__init__">(l2p.TaskBuilder method)</a>
 </li>
+          <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.__init__">(l2p.utils.pddl_validator.SyntaxValidator method)</a>
+</li>
         </ul></li>
     </ul></td>
   </tr></table>
@@ -264,12 +266,8 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="l2p.html#l2p.utils.pddl_types.Action">Action (class in l2p.utils.pddl_types)</a>
 </li>
-        <li><a href="l2p.html#l2p.DomainBuilder.action_desc">action_desc() (l2p.DomainBuilder method)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="l2p.html#l2p.DomainBuilder.action_descs">action_descs() (l2p.DomainBuilder method)</a>
-</li>
         <li><a href="l2p.html#l2p.utils.pddl_types.DomainDetails.actions">actions (l2p.utils.pddl_types.DomainDetails attribute)</a>
 </li>
     </ul></td>
@@ -284,25 +282,43 @@
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_parser.check_parse_problem">check_parse_problem() (in module l2p.utils.pddl_parser)</a>
 </li>
-        <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.clean">clean (l2p.utils.pddl_types.Predicate attribute)</a>
+        <li><a href="l2p.html#l2p.utils.pddl_types.Function.clean">clean (l2p.utils.pddl_types.Function attribute)</a>
+
+        <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.clean">(l2p.utils.pddl_types.Predicate attribute)</a>
 </li>
+        </ul></li>
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.clear">clear() (l2p.utils.pddl_types.Action method)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Constant.clear">(l2p.utils.pddl_types.Constant method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.clear">(l2p.utils.pddl_types.Function method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.clear">(l2p.utils.pddl_types.PDDLType method)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.clear">(l2p.utils.pddl_types.Predicate method)</a>
 </li>
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="l2p.html#l2p.utils.pddl_parser.clear_comments">clear_comments() (in module l2p.utils.pddl_parser)</a>
-</li>
         <li><a href="l2p.html#l2p.utils.pddl_parser.combine_blocks">combine_blocks() (in module l2p.utils.pddl_parser)</a>
 </li>
-        <li><a href="l2p.html#l2p.utils.pddl_parser.convert_to_dict">convert_to_dict() (in module l2p.utils.pddl_parser)</a>
+        <li><a href="l2p.html#l2p.utils.pddl_parser.concatenate_strings">concatenate_strings() (in module l2p.utils.pddl_parser)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_types.Constant">Constant (class in l2p.utils.pddl_types)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_types.DomainDetails.constants">constants (l2p.utils.pddl_types.DomainDetails attribute)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.copy">copy() (l2p.utils.pddl_types.Action method)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Constant.copy">(l2p.utils.pddl_types.Constant method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.copy">(l2p.utils.pddl_types.Function method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.copy">(l2p.utils.pddl_types.PDDLType method)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.copy">(l2p.utils.pddl_types.Predicate method)</a>
 </li>
         </ul></li>
@@ -314,11 +330,13 @@
   <h2>D</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="l2p.html#l2p.DomainBuilder.delete_constants">delete_constants() (l2p.DomainBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.DomainBuilder.delete_function">delete_function() (l2p.DomainBuilder method)</a>
+</li>
         <li><a href="l2p.html#l2p.TaskBuilder.delete_goal_state">delete_goal_state() (l2p.TaskBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.TaskBuilder.delete_initial_state">delete_initial_state() (l2p.TaskBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.DomainBuilder.delete_nl_action">delete_nl_action() (l2p.DomainBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.TaskBuilder.delete_objects">delete_objects() (l2p.TaskBuilder method)</a>
 </li>
@@ -326,16 +344,28 @@
 </li>
         <li><a href="l2p.html#l2p.DomainBuilder.delete_predicate">delete_predicate() (l2p.DomainBuilder method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="l2p.html#l2p.DomainBuilder.delete_type">delete_type() (l2p.DomainBuilder method)</a>
 </li>
-        <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.desc">desc (l2p.utils.pddl_types.Predicate attribute)</a>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="l2p.html#l2p.utils.pddl_types.Action.desc">desc (l2p.utils.pddl_types.Action attribute)</a>
+
+        <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.desc">(l2p.utils.pddl_types.Function attribute)</a>
 </li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.desc">(l2p.utils.pddl_types.PDDLType attribute)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.desc">(l2p.utils.pddl_types.Predicate attribute)</a>
+</li>
+        </ul></li>
         <li><a href="l2p.html#l2p.utils.pddl_types.DomainDetails.domain_desc">domain_desc (l2p.utils.pddl_types.DomainDetails attribute)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_types.DomainDetails.domain_pddl">domain_pddl (l2p.utils.pddl_types.DomainDetails attribute)</a>
+
+        <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PlanDetails.domain_pddl">(l2p.utils.pddl_types.PlanDetails attribute)</a>
 </li>
+        </ul></li>
         <li><a href="l2p.html#l2p.DomainBuilder">DomainBuilder (class in l2p)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_types.DomainDetails">DomainDetails (class in l2p.utils.pddl_types)</a>
@@ -352,39 +382,11 @@
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.effects">effects (l2p.utils.pddl_types.Action attribute)</a>
 </li>
-        <li><a href="l2p.html#l2p.DomainBuilder.extract_effects">extract_effects() (l2p.DomainBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.TaskBuilder.extract_goal_state">extract_goal_state() (l2p.TaskBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.utils.pddl_parser.extract_heading">extract_heading() (in module l2p.utils.pddl_parser)</a>
-</li>
-        <li><a href="l2p.html#l2p.TaskBuilder.extract_initial_state">extract_initial_state() (l2p.TaskBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.DomainBuilder.extract_nl_actions">extract_nl_actions() (l2p.DomainBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.TaskBuilder.extract_nl_conditions">extract_nl_conditions() (l2p.TaskBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.TaskBuilder.extract_objects">extract_objects() (l2p.TaskBuilder method)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="l2p.html#l2p.DomainBuilder.extract_parameters">extract_parameters() (l2p.DomainBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.DomainBuilder.extract_pddl_action">extract_pddl_action() (l2p.DomainBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.DomainBuilder.extract_pddl_actions">extract_pddl_actions() (l2p.DomainBuilder method)</a>
+        <li><a href="l2p.html#l2p.DomainBuilder.extract_nl_actions">extract_nl_actions() (l2p.DomainBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_planner.FastDownward.extract_plan_steps">extract_plan_steps() (l2p.utils.pddl_planner.FastDownward method)</a>
-</li>
-        <li><a href="l2p.html#l2p.DomainBuilder.extract_preconditions">extract_preconditions() (l2p.DomainBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.DomainBuilder.extract_predicates">extract_predicates() (l2p.DomainBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.TaskBuilder.extract_task">extract_task() (l2p.TaskBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.DomainBuilder.extract_type">extract_type() (l2p.DomainBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.DomainBuilder.extract_type_hierarchy">extract_type_hierarchy() (l2p.DomainBuilder method)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -396,34 +398,58 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="l2p.html#l2p.utils.pddl_planner.FastDownward">FastDownward (class in l2p.utils.pddl_planner)</a>
 </li>
+        <li><a href="l2p.html#l2p.FeedbackBuilder.feedback_state">feedback_state() (l2p.FeedbackBuilder method)</a>
+</li>
         <li><a href="l2p.html#l2p.FeedbackBuilder">FeedbackBuilder (class in l2p)</a>
 </li>
-        <li><a href="l2p.html#l2p.TaskBuilder.format_action">format_action() (l2p.TaskBuilder method)</a>
+        <li><a href="l2p.html#l2p.DomainBuilder.formalize_constants">formalize_constants() (l2p.DomainBuilder method)</a>
 </li>
-        <li><a href="l2p.html#l2p.utils.pddl_parser.format_dict">format_dict() (in module l2p.utils.pddl_parser)</a>
+        <li><a href="l2p.html#l2p.DomainBuilder.formalize_domain_level_specs">formalize_domain_level_specs() (l2p.DomainBuilder method)</a>
 </li>
-        <li><a href="l2p.html#l2p.TaskBuilder.format_goal">format_goal() (l2p.TaskBuilder method)</a>
+        <li><a href="l2p.html#l2p.DomainBuilder.formalize_effects">formalize_effects() (l2p.DomainBuilder method)</a>
 </li>
-        <li><a href="l2p.html#l2p.TaskBuilder.format_initial">format_initial() (l2p.TaskBuilder method)</a>
+        <li><a href="l2p.html#l2p.DomainBuilder.formalize_functions">formalize_functions() (l2p.DomainBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.TaskBuilder.formalize_goal_state">formalize_goal_state() (l2p.TaskBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.TaskBuilder.formalize_initial_state">formalize_initial_state() (l2p.TaskBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.TaskBuilder.formalize_objects">formalize_objects() (l2p.TaskBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.DomainBuilder.formalize_parameters">formalize_parameters() (l2p.DomainBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.DomainBuilder.formalize_pddl_action">formalize_pddl_action() (l2p.DomainBuilder method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="l2p.html#l2p.TaskBuilder.format_objects">format_objects() (l2p.TaskBuilder method)</a>
+        <li><a href="l2p.html#l2p.DomainBuilder.formalize_pddl_actions">formalize_pddl_actions() (l2p.DomainBuilder method)</a>
 </li>
-        <li><a href="l2p.html#l2p.utils.pddl_parser.format_predicates">format_predicates() (in module l2p.utils.pddl_parser)</a>
-
-        <ul>
-          <li><a href="l2p.html#l2p.DomainBuilder.format_predicates">(l2p.DomainBuilder method)</a>
+        <li><a href="l2p.html#l2p.DomainBuilder.formalize_preconditions">formalize_preconditions() (l2p.DomainBuilder method)</a>
 </li>
-        </ul></li>
-        <li><a href="l2p.html#l2p.utils.pddl_parser.format_types">format_types() (in module l2p.utils.pddl_parser)</a>
+        <li><a href="l2p.html#l2p.DomainBuilder.formalize_predicates">formalize_predicates() (l2p.DomainBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.TaskBuilder.formalize_task">formalize_task() (l2p.TaskBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.DomainBuilder.formalize_type_hierarchy">formalize_type_hierarchy() (l2p.DomainBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.DomainBuilder.formalize_types">formalize_types() (l2p.DomainBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.fromkeys">fromkeys() (l2p.utils.pddl_types.Action class method)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Constant.fromkeys">(l2p.utils.pddl_types.Constant class method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.fromkeys">(l2p.utils.pddl_types.Function class method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.fromkeys">(l2p.utils.pddl_types.PDDLType class method)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.fromkeys">(l2p.utils.pddl_types.Predicate class method)</a>
 </li>
         </ul></li>
+        <li><a href="l2p.html#l2p.utils.pddl_types.Function">Function (class in l2p.utils.pddl_types)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_types.DomainDetails.functions">functions (l2p.utils.pddl_types.DomainDetails attribute)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -438,25 +464,37 @@
 </li>
         <li><a href="l2p.html#l2p.PromptBuilder.generate_prompt">generate_prompt() (l2p.PromptBuilder method)</a>
 </li>
+        <li><a href="l2p.html#l2p.DomainBuilder.generate_requirements">generate_requirements() (l2p.DomainBuilder method)</a>
+</li>
         <li><a href="l2p.html#l2p.TaskBuilder.generate_task">generate_task() (l2p.TaskBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.get">get() (l2p.utils.pddl_types.Action method)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Constant.get">(l2p.utils.pddl_types.Constant method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.get">(l2p.utils.pddl_types.Function method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.get">(l2p.utils.pddl_types.PDDLType method)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.get">(l2p.utils.pddl_types.Predicate method)</a>
 </li>
         </ul></li>
+        <li><a href="l2p.html#l2p.DomainBuilder.get_constants">get_constants() (l2p.DomainBuilder method)</a>
+</li>
         <li><a href="l2p.html#l2p.PromptBuilder.get_examples">get_examples() (l2p.PromptBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.FeedbackBuilder.get_feedback">get_feedback() (l2p.FeedbackBuilder method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="l2p.html#l2p.PromptBuilder.get_format">get_format() (l2p.PromptBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.DomainBuilder.get_functions">get_functions() (l2p.DomainBuilder method)</a>
+</li>
         <li><a href="l2p.html#l2p.TaskBuilder.get_goal">get_goal() (l2p.TaskBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.TaskBuilder.get_initial">get_initial() (l2p.TaskBuilder method)</a>
-</li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="l2p.html#l2p.DomainBuilder.get_nl_actions">get_nl_actions() (l2p.DomainBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.TaskBuilder.get_objects">get_objects() (l2p.TaskBuilder method)</a>
 </li>
@@ -467,8 +505,6 @@
         <li><a href="l2p.html#l2p.PromptBuilder.get_role">get_role() (l2p.PromptBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.PromptBuilder.get_task">get_task() (l2p.PromptBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.PromptBuilder.get_technique">get_technique() (l2p.PromptBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.DomainBuilder.get_type_hierarchy">get_type_hierarchy() (l2p.DomainBuilder method)</a>
 </li>
@@ -500,19 +536,21 @@
   <h2>I</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="l2p.html#l2p.utils.pddl_parser.indent">indent() (in module l2p.utils.pddl_parser)</a>
-</li>
         <li><a href="l2p.html#l2p.utils.pddl_types.ProblemDetails.initial">initial (l2p.utils.pddl_types.ProblemDetails attribute)</a>
 </li>
         <li><a href="l2p.html#l2p.FeedbackBuilder.initial_state_feedback">initial_state_feedback() (l2p.FeedbackBuilder method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="l2p.html#l2p.utils.pddl_planner.FastDownward.is_unrecoverable">is_unrecoverable() (l2p.utils.pddl_planner.FastDownward method)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.items">items() (l2p.utils.pddl_types.Action method)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Constant.items">(l2p.utils.pddl_types.Constant method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.items">(l2p.utils.pddl_types.Function method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.items">(l2p.utils.pddl_types.PDDLType method)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.items">(l2p.utils.pddl_types.Predicate method)</a>
 </li>
         </ul></li>
@@ -527,6 +565,12 @@
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.keys">keys() (l2p.utils.pddl_types.Action method)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Constant.keys">(l2p.utils.pddl_types.Constant method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.keys">(l2p.utils.pddl_types.Function method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.keys">(l2p.utils.pddl_types.PDDLType method)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.keys">(l2p.utils.pddl_types.Predicate method)</a>
 </li>
         </ul></li>
@@ -604,7 +648,13 @@
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.name">name (l2p.utils.pddl_types.Action attribute)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Constant.name">(l2p.utils.pddl_types.Constant attribute)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.DomainDetails.name">(l2p.utils.pddl_types.DomainDetails attribute)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.name">(l2p.utils.pddl_types.Function attribute)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.name">(l2p.utils.pddl_types.PDDLType attribute)</a>
 </li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.name">(l2p.utils.pddl_types.Predicate attribute)</a>
 </li>
@@ -642,12 +692,24 @@
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.params">params (l2p.utils.pddl_types.Action attribute)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.params">(l2p.utils.pddl_types.Function attribute)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.params">(l2p.utils.pddl_types.Predicate attribute)</a>
 </li>
         </ul></li>
+        <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.parent">parent (l2p.utils.pddl_types.PDDLType attribute)</a>
+</li>
         <li><a href="l2p.html#l2p.utils.pddl_parser.parse_action">parse_action() (in module l2p.utils.pddl_parser)</a>
 </li>
+        <li><a href="l2p.html#l2p.utils.pddl_parser.parse_constants">parse_constants() (in module l2p.utils.pddl_parser)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_parser.parse_effects">parse_effects() (in module l2p.utils.pddl_parser)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_parser.parse_functions">parse_functions() (in module l2p.utils.pddl_parser)</a>
+</li>
         <li><a href="l2p.html#l2p.utils.pddl_parser.parse_goal">parse_goal() (in module l2p.utils.pddl_parser)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_parser.parse_heading">parse_heading() (in module l2p.utils.pddl_parser)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_parser.parse_initial">parse_initial() (in module l2p.utils.pddl_parser)</a>
 </li>
@@ -657,27 +719,51 @@
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_parser.parse_params">parse_params() (in module l2p.utils.pddl_parser)</a>
 </li>
+        <li><a href="l2p.html#l2p.utils.pddl_parser.parse_pddl">parse_pddl() (in module l2p.utils.pddl_parser)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_parser.parse_preconditions">parse_preconditions() (in module l2p.utils.pddl_parser)</a>
+</li>
         <li><a href="l2p.html#l2p.utils.pddl_parser.parse_predicates">parse_predicates() (in module l2p.utils.pddl_parser)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_parser.parse_task_states">parse_task_states() (in module l2p.utils.pddl_parser)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_parser.parse_type_hierarchy">parse_type_hierarchy() (in module l2p.utils.pddl_parser)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_parser.parse_types">parse_types() (in module l2p.utils.pddl_parser)</a>
 </li>
         <li><a href="l2p.html#l2p.FeedbackBuilder.pddl_action_feedback">pddl_action_feedback() (l2p.FeedbackBuilder method)</a>
 </li>
+        <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType">PDDLType (class in l2p.utils.pddl_types)</a>
+</li>
         <li><a href="l2p.html#l2p.utils.pddl_types.PlanDetails.plan_nl">plan_nl (l2p.utils.pddl_types.PlanDetails attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="l2p.html#l2p.utils.pddl_types.PlanDetails.plan_pddl">plan_pddl (l2p.utils.pddl_types.PlanDetails attribute)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_types.PlanDetails">PlanDetails (class in l2p.utils.pddl_types)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.pop">pop() (l2p.utils.pddl_types.Action method)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Constant.pop">(l2p.utils.pddl_types.Constant method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.pop">(l2p.utils.pddl_types.Function method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.pop">(l2p.utils.pddl_types.PDDLType method)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.pop">(l2p.utils.pddl_types.Predicate method)</a>
 </li>
         </ul></li>
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.popitem">popitem() (l2p.utils.pddl_types.Action method)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Constant.popitem">(l2p.utils.pddl_types.Constant method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.popitem">(l2p.utils.pddl_types.Function method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.popitem">(l2p.utils.pddl_types.PDDLType method)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.popitem">(l2p.utils.pddl_types.Predicate method)</a>
 </li>
         </ul></li>
@@ -693,8 +779,12 @@
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_types.ProblemDetails.problem_desc">problem_desc (l2p.utils.pddl_types.ProblemDetails attribute)</a>
 </li>
-        <li><a href="l2p.html#l2p.utils.pddl_types.ProblemDetails.problem_pddl">problem_pddl (l2p.utils.pddl_types.ProblemDetails attribute)</a>
+        <li><a href="l2p.html#l2p.utils.pddl_types.PlanDetails.problem_pddl">problem_pddl (l2p.utils.pddl_types.PlanDetails attribute)</a>
+
+        <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.ProblemDetails.problem_pddl">(l2p.utils.pddl_types.ProblemDetails attribute)</a>
 </li>
+        </ul></li>
         <li><a href="l2p.html#l2p.utils.pddl_types.ProblemDetails">ProblemDetails (class in l2p.utils.pddl_types)</a>
 </li>
         <li><a href="l2p.html#l2p.PromptBuilder">PromptBuilder (class in l2p)</a>
@@ -714,18 +804,20 @@
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.raw">raw (l2p.utils.pddl_types.Action attribute)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.raw">(l2p.utils.pddl_types.Function attribute)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.raw">(l2p.utils.pddl_types.Predicate attribute)</a>
 </li>
         </ul></li>
         <li><a href="l2p.html#l2p.PromptBuilder.remove_examples">remove_examples() (l2p.PromptBuilder method)</a>
 </li>
-        <li><a href="l2p.html#l2p.PromptBuilder.remove_role">remove_role() (l2p.PromptBuilder method)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="l2p.html#l2p.PromptBuilder.remove_task">remove_task() (l2p.PromptBuilder method)</a>
+        <li><a href="l2p.html#l2p.PromptBuilder.remove_format">remove_format() (l2p.PromptBuilder method)</a>
 </li>
-        <li><a href="l2p.html#l2p.PromptBuilder.remove_technique">remove_technique() (l2p.PromptBuilder method)</a>
+        <li><a href="l2p.html#l2p.PromptBuilder.remove_role">remove_role() (l2p.PromptBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.PromptBuilder.remove_task">remove_task() (l2p.PromptBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_types.DomainDetails.requirements">requirements (l2p.utils.pddl_types.DomainDetails attribute)</a>
 </li>
@@ -739,13 +831,17 @@
   <h2>S</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="l2p.html#l2p.DomainBuilder.set_constants">set_constants() (l2p.DomainBuilder method)</a>
+</li>
         <li><a href="l2p.html#l2p.PromptBuilder.set_examples">set_examples() (l2p.PromptBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.PromptBuilder.set_format">set_format() (l2p.PromptBuilder method)</a>
+</li>
+        <li><a href="l2p.html#l2p.DomainBuilder.set_function">set_function() (l2p.DomainBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.TaskBuilder.set_goal">set_goal() (l2p.TaskBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.TaskBuilder.set_initial">set_initial() (l2p.TaskBuilder method)</a>
-</li>
-        <li><a href="l2p.html#l2p.DomainBuilder.set_nl_actions">set_nl_actions() (l2p.DomainBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.TaskBuilder.set_objects">set_objects() (l2p.TaskBuilder method)</a>
 </li>
@@ -759,8 +855,6 @@
 </li>
         <li><a href="l2p.html#l2p.PromptBuilder.set_task">set_task() (l2p.PromptBuilder method)</a>
 </li>
-        <li><a href="l2p.html#l2p.PromptBuilder.set_technique">set_technique() (l2p.PromptBuilder method)</a>
-</li>
         <li><a href="l2p.html#l2p.DomainBuilder.set_type_hierarchy">set_type_hierarchy() (l2p.DomainBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.DomainBuilder.set_types">set_types() (l2p.DomainBuilder method)</a>
@@ -768,6 +862,12 @@
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.setdefault">setdefault() (l2p.utils.pddl_types.Action method)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Constant.setdefault">(l2p.utils.pddl_types.Constant method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.setdefault">(l2p.utils.pddl_types.Function method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.setdefault">(l2p.utils.pddl_types.PDDLType method)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.setdefault">(l2p.utils.pddl_types.Predicate method)</a>
 </li>
         </ul></li>
@@ -787,9 +887,9 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="l2p.html#l2p.FeedbackBuilder.type_feedback">type_feedback() (l2p.FeedbackBuilder method)</a>
+        <li><a href="l2p.html#l2p.utils.pddl_types.Constant.type">type (l2p.utils.pddl_types.Constant attribute)</a>
 </li>
-        <li><a href="l2p.html#l2p.FeedbackBuilder.type_hierarchy_feedback">type_hierarchy_feedback() (l2p.FeedbackBuilder method)</a>
+        <li><a href="l2p.html#l2p.FeedbackBuilder.type_feedback">type_feedback() (l2p.FeedbackBuilder method)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_types.DomainDetails.types">types (l2p.utils.pddl_types.DomainDetails attribute)</a>
 </li>
@@ -804,6 +904,12 @@
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.update">update() (l2p.utils.pddl_types.Action method)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Constant.update">(l2p.utils.pddl_types.Constant method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.update">(l2p.utils.pddl_types.Function method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.update">(l2p.utils.pddl_types.PDDLType method)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.update">(l2p.utils.pddl_types.Predicate method)</a>
 </li>
         </ul></li>
@@ -815,21 +921,27 @@
   <h2>V</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_constant_types">validate_constant_types() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_cyclic_types">validate_cyclic_types() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_duplicate_headers">validate_duplicate_headers() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
+</li>
         <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_duplicate_predicates">validate_duplicate_predicates() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
+</li>
+        <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_format_functions">validate_format_functions() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_format_predicates">validate_format_predicates() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
 </li>
+        <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_format_types">validate_format_types() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
+</li>
         <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_header">validate_header() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
-</li>
-        <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_keyword_usage">validate_keyword_usage() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
-</li>
-        <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_new_action_creation">validate_new_action_creation() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_overflow_predicates">validate_overflow_predicates() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_params">validate_params() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
 </li>
-        <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_pddl_usage_predicates">validate_pddl_usage_predicates() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
+        <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_pddl_action">validate_pddl_action() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
@@ -843,11 +955,17 @@
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_unsupported_keywords">validate_unsupported_keywords() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
 </li>
-        <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_usage_predicates">validate_usage_predicates() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
+        <li><a href="l2p.html#l2p.utils.pddl_validator.SyntaxValidator.validate_usage_action">validate_usage_action() (l2p.utils.pddl_validator.SyntaxValidator method)</a>
 </li>
         <li><a href="l2p.html#l2p.utils.pddl_types.Action.values">values() (l2p.utils.pddl_types.Action method)</a>
 
         <ul>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Constant.values">(l2p.utils.pddl_types.Constant method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.Function.values">(l2p.utils.pddl_types.Function method)</a>
+</li>
+          <li><a href="l2p.html#l2p.utils.pddl_types.PDDLType.values">(l2p.utils.pddl_types.PDDLType method)</a>
+</li>
           <li><a href="l2p.html#l2p.utils.pddl_types.Predicate.values">(l2p.utils.pddl_types.Predicate method)</a>
 </li>
         </ul></li>

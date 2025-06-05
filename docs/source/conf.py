@@ -9,7 +9,7 @@
 import os
 import sys
 
-# sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("../../l2p"))
 
 project = "L2P"
 copyright = "2025, Marcus Tantakoun"

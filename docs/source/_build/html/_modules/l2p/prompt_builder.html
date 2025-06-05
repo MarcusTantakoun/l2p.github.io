@@ -244,6 +244,8 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This file uses inputted NL descriptions to generate prompts for LLM. The user does not</span>
 <span class="sd">have to use this class, but it is generally advisable for ease of use.</span>
+
+<span class="sd">    - format (str) should be fixed prompt from: /templates</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 
@@ -253,13 +255,15 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">role</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">technique</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">examples</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">examples</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">task</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">=</span> <span class="n">role</span>  <span class="c1"># role for LLM to follow (i.e. PDDL predicate constructor)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">technique</span> <span class="o">=</span> <span class="n">technique</span>  <span class="c1"># prompting technique (i.e. CoT)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">examples</span> <span class="o">=</span> <span class="n">examples</span>  <span class="c1"># n-shot examples for LLM to follow</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="nb">format</span>  <span class="c1"># prompting format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">examples</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">examples</span> <span class="k">if</span> <span class="n">examples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="p">)</span>  <span class="c1"># n-shot examples for LLM to follow</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">task</span>  <span class="c1"># dynamic placeholder given information to LLM</span>
 
 <div class="viewcode-block" id="PromptBuilder.set_role">
@@ -269,11 +273,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">=</span> <span class="n">role</span></div>
 
 
-<div class="viewcode-block" id="PromptBuilder.set_technique">
-<a class="viewcode-back" href="../../l2p.html#l2p.PromptBuilder.set_technique">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_technique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">technique</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the prompting technique for LLM to perform task&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">technique</span> <span class="o">=</span> <span class="n">technique</span></div>
+<div class="viewcode-block" id="PromptBuilder.set_format">
+<a class="viewcode-back" href="../../l2p.html#l2p.PromptBuilder.set_format">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">format</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the prompting format for LLM to perform task&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="nb">format</span></div>
 
 
 <div class="viewcode-block" id="PromptBuilder.set_examples">
@@ -312,11 +316,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">role</span></div>
 
 
-<div class="viewcode-block" id="PromptBuilder.get_technique">
-<a class="viewcode-back" href="../../l2p.html#l2p.PromptBuilder.get_technique">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_technique</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns prompting technique of the prompt given&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">technique</span></div>
+<div class="viewcode-block" id="PromptBuilder.get_format">
+<a class="viewcode-back" href="../../l2p.html#l2p.PromptBuilder.get_format">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns prompting format of the prompt given&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span></div>
 
 
 <div class="viewcode-block" id="PromptBuilder.get_examples">
@@ -340,11 +344,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="PromptBuilder.remove_technique">
-<a class="viewcode-back" href="../../l2p.html#l2p.PromptBuilder.remove_technique">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">remove_technique</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes technique prompt&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">technique</span> <span class="o">=</span> <span class="kc">None</span></div>
+<div class="viewcode-block" id="PromptBuilder.remove_format">
+<a class="viewcode-back" href="../../l2p.html#l2p.PromptBuilder.remove_format">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes format prompt&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="PromptBuilder.remove_examples">
@@ -371,8 +375,8 @@
             <span class="n">prompt</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;[ROLE]: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">role</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
             <span class="n">prompt</span> <span class="o">+=</span> <span class="s2">&quot;------------------------------------------------</span><span class="se">\n</span><span class="s2">&quot;</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">technique</span><span class="p">:</span>
-            <span class="n">prompt</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;[TECHNIQUE]: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">technique</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">:</span>
+            <span class="n">prompt</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;[FORMAT]: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
             <span class="n">prompt</span> <span class="o">+=</span> <span class="s2">&quot;------------------------------------------------</span><span class="se">\n</span><span class="s2">&quot;</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">examples</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
